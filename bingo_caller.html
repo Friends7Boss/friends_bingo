@@ -28,6 +28,7 @@
         .result { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
         .total-bet-amount { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
         .called-cell { background-color: lightgreen; }
+        .marked { background-color: yellow; }
     </style>
 </head>
 <body class="bg-light">
@@ -173,14 +174,14 @@
 
                 const boards = JSON.parse(localStorage.getItem('bingo_boards'));
                 const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
- 
+
                 if (!boards || boardNumber > boards.length) {
                     resultElement.textContent = 'Board number not found.';
                     return;
                 }
 
                 if (!selectedIndices.includes(boardNumber - 1)) {
-                    resultElement.textContent = `Board number ${boardNumber} is not selected.`;
+                    resultElement.textContent = `Board number ${boardNumber} is not registered.`;
                     return;
                 }
 
