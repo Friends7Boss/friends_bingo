@@ -97,7 +97,7 @@
                 <div id="board-select-container" class="custom-select-container mb-4"></div>
                 <div class="form-group text-center mb-4">
                     <label for="bet-amount">Bet Amount:</label>
-                    <input type="text" id="bet-amount" class="form-control w-50 mx-auto" placeholder="Enter bet amount">
+                    <input type="number" id="bet-amount" class="form-control w-50 mx-auto" placeholder="Enter bet amount">
                 </div>
                 <div class="text-center mb-4">
                     <button id="play-button" class="btn btn-primary">Play</button>
@@ -179,13 +179,13 @@
                 const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
                 const selectedIndices = Array.from(checkedCheckboxes).map(cb => parseInt(cb.value, 10));
                 const betAmount = betAmountInput.value;
-                if (selectedIndices.length > 0) {
+                if (selectedIndices.length > 0 && betAmount) {
                     localStorage.setItem('selected_boards', JSON.stringify(selectedIndices));
                     localStorage.setItem('bet_amount', betAmount);
                     window.location.href = 'bingo_caller.html';
                 } else {
-                    alert('No board selected. Please select at least one board.');
-                } 
+                    alert('Please select at least one board and enter a bet amount.');
+                }
             });
         });
     </script>
