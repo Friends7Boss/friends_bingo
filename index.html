@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unique Bingo Board</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 2px solid blue;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+        .bingo-board div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid blue;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .bingo-board .header {
+            font-weight: bold;
+        }
+        .bingo-board .header-b {
+            background-color: red;
+            color: white;
+        }
+        .bingo-board .header-i {
+            background-color: #ffa500;
+            color: white;
+        }
+        .bingo-board .header-n {
+            background-color: #ffff00;
+            color: black;
+        }
+        .bingo-board .header-g {
+            background-color: #008000;
+            color: white;
+        }
+        .bingo-board .header-o {
+            background-color: #0000ff;
+            color: white;
+        }
+        .bingo-board .free {
+            background-color: aqua;
+            color: white;
+        }
+        .board-title {
+            grid-column: span 5;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .bingo-board .selected {
+            background-color: aqua;
+            color: white;
+        }
+        .custom-select-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 5px;
+        }
+        .custom-select-container label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            border: 1px solid blue;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .custom-select-container input[type="checkbox"] {
+            display: none;
+        }
+        .custom-select-container input[type="checkbox"]:checked + label {
+            background-color: aqua;
+            color: white;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <h1 class="text-center my-4">Boards</h1>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div id="board-select-container" class="custom-select-container mb-4"></div>
+                <div class="form-group text-center mb-4">
+                    <label for="bet-amount">Bet Amount:</label>
+                    <input type="text" id="bet-amount" class="form-control w-50 mx-auto" placeholder="Enter bet amount">
+                </div>
+                <div class="text-center mb-4">
+                    <button id="play-button" class="btn btn-primary">Play</button>
+                    <a href="selected_boards.html" id="view-selected-button" class="btn btn-success">View Selected Boards</a>
+                    <a href="all_boards.html" id="view-all-button" class="btn btn-info">View All Boards</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function generateBingoBoard() {
+            const board = [];
+
+            // Define number ranges for each column
+            const ranges = [
+                Array.from({ length: 15 }, (_, i) => i + 1),  // B column: 1-15
+                Array.from({ length: 15 }, (_, i) => i + 16), // I column: 16-30
+                Array.from({ length: 15 }, (_, i) => i + 31), // N column: 31-45
+                Array.from({ length: 15 }, (_, i) => i + 46), // G column: 46-60
+                Array.from({ length: 15 }, (_, i) => i + 61)  // O column: 61-75
+            ];
+
+            // Shuffle each range
+            ranges.forEach(range => shuffle(range));
+
+            // Create the board using the shuffled numbers
+            for (let i = 0; i < 5; i++) {
+                const row = [];
+                for (let j = 0; j < 5; j++) {
+                    if (i === 2 && j === 2) {
+                        row.push('FREE');
+                    } else {
+                        row.push(ranges[j][i]);
+                    }
+                }
+                board.push(row);
+            }
+
+            return board;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const boardSelectContainer = document.getElementById('board-select-container');
+            const betAmountInput = document.getElementById('bet-amount');
+
+            let boards = localStorage.getItem('bingo_boards');
+            if (!boards) {
+                boards = [];
+                for (let i = 0; i < 100; i++) {
+                    const board = generateBingoBoard();
+                    boards.push(board);
+                }
+                localStorage.setItem('bingo_boards', JSON.stringify(boards));
+            } else {
+                boards = JSON.parse(boards);
+            }
+
+            boards.forEach((board, index) => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `board-${index + 1}`;
+                checkbox.value = index;
+                const label = document.createElement('label');
+                label.setAttribute('for', `board-${index + 1}`);
+                label.textContent = index + 1;
+                boardSelectContainer.appendChild(checkbox);
+                boardSelectContainer.appendChild(label);
+            });
+
+            document.getElementById('play-button').addEventListener('click', () => {
+                const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                const selectedIndices = Array.from(checkedCheckboxes).map(cb => parseInt(cb.value, 10));
+                const betAmount = betAmountInput.value;
+                if (selectedIndices.length > 0) {
+                    localStorage.setItem('selected_boards', JSON.stringify(selectedIndices));
+                    localStorage.setItem('bet_amount', betAmount);
+                    window.location.href = 'bingo_caller.html';
+                } else {
+                    alert('No board selected. Please select at least one board.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
