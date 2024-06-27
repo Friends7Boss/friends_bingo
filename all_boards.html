@@ -71,6 +71,23 @@
 
     <script src="bingo.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const boardsContainer = document.getElementById('boards-container');
+            let boards = JSON.parse(localStorage.getItem('bingo_boards')) || [];
+
+            if (boards.length === 0) {
+                for (let i = 0; i < 100; i++) {
+                    boards.push(generateBingoBoard());
+                }
+                localStorage.setItem('bingo_boards', JSON.stringify(boards));
+            }
+
+            boards.forEach((board, index) => {
+                const boardElement = renderBingoBoard(board, index);
+                boardsContainer.appendChild(boardElement);
+            });
+        });
+
         function generateBingoBoard() {
             const board = [];
             const ranges = [
@@ -137,23 +154,6 @@
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const boardsContainer = document.getElementById('boards-container');
-            const boards = JSON.parse(localStorage.getItem('bingo_boards')) || [];
-
-            if (boards.length === 0) {
-                for (let i = 0; i < 100; i++) {
-                    boards.push(generateBingoBoard());
-                }
-                localStorage.setItem('bingo_boards', JSON.stringify(boards));
-            }
-
-            boards.forEach((board, index) => {
-                const boardElement = renderBingoBoard(board, index);
-                boardsContainer.appendChild(boardElement);
-            });
-        });
     </script>
 </body>
 </html>
