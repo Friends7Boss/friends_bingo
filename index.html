@@ -101,7 +101,7 @@
                 </div>
                 <div class="text-center mb-4">
                     <button id="play-button" class="btn btn-primary">Play</button>
-                    <a href="selected_boards.html" id="view-selected-button" class="btn btn-success">View Selected Boards</a>
+                    <a href="view_selected_boards.html" id="view-selected-button" class="btn btn-success">View Selected Boards</a>
                     <a href="all_boards.html" id="view-all-button" class="btn btn-info">View All Boards</a>
                 </div>
             </div>
@@ -185,6 +185,16 @@
                     window.location.href = 'bingo_caller.html';
                 } else {
                     alert('Please select at least one board and enter a bet amount.');
+                }
+            });
+
+            document.getElementById('view-selected-button').addEventListener('click', () => {
+                const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                const selectedIndices = Array.from(checkedCheckboxes).map(cb => parseInt(cb.value, 10));
+                if (selectedIndices.length > 0) {
+                    localStorage.setItem('selected_boards', JSON.stringify(selectedIndices));
+                } else {
+                    alert('Please select at least one board.');
                 }
             });
         });
