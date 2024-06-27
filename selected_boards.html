@@ -102,7 +102,7 @@
             return boardContainer;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function loadSelectedBoards() {
             const boardsContainer = document.getElementById('boards-container');
             const boards = JSON.parse(localStorage.getItem('bingo_boards'));
             const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
@@ -116,7 +116,9 @@
             } else {
                 boardsContainer.innerHTML = '<p class="text-center">No boards selected.</p>';
             }
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSelectedBoards);
     </script>
 </body>
 </html>
