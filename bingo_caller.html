@@ -173,7 +173,7 @@
 
                 const boards = JSON.parse(localStorage.getItem('bingo_boards'));
                 const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
+ 
                 if (!boards || boardNumber > boards.length) {
                     resultElement.textContent = 'Board number not found.';
                     return;
@@ -290,7 +290,7 @@
                 }
 
                 displayTotalBetAmount();
-            }); 
+            });
 
             callNumberButton.addEventListener('click', startCallingNumbers);
             playPauseButton.addEventListener('click', () => {
