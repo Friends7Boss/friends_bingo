@@ -24,7 +24,6 @@
             height: 40px;
             border: 1px solid blue;
             background-color: #fff;
-            cursor: pointer;
         }
         .bingo-board .header {
             font-weight: bold;
@@ -58,9 +57,6 @@
             text-align: center;
             font-weight: bold;
             margin-bottom: 10px;
-        }
-        .marked {
-            background-color: yellow;
         }
     </style>
 </head>
@@ -99,9 +95,6 @@
                     if (board[i][j] === 'FREE') {
                         cellElement.classList.add('free');
                     }
-                    cellElement.addEventListener('click', () => {
-                        cellElement.classList.toggle('marked');
-                    });
                     boardContainer.appendChild(cellElement);
                 }
             }
@@ -127,4 +120,3 @@
     </script>
 </body>
 </html>
- 
