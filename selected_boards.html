@@ -95,10 +95,18 @@
                 boardContainer.appendChild(headerCell);
             });
 
-            for (let col = 0; col < 5; col++) {
-                for (let row = 0; row < 5; row++) {
+            const numberRanges = {
+                B: [1, 15],
+                I: [16, 30],
+                N: [31, 45],
+                G: [46, 60],
+                O: [61, 75]
+            };
+
+            headers.forEach((header, colIndex) => {
+                for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
                     const cellElement = document.createElement('div');
-                    const cellValue = board[row][col];
+                    const cellValue = board[rowIndex][colIndex];
                     cellElement.textContent = cellValue;
                     if (cellValue === 'FREE') {
                         cellElement.classList.add('free');
@@ -110,7 +118,7 @@
                     });
                     boardContainer.appendChild(cellElement);
                 }
-            }
+            });
 
             return boardContainer;
         }
@@ -130,7 +138,7 @@
             } else {
                 boardsContainer.innerHTML = '<p class="text-center">No boards selected.</p>';
             }
-        });   
+        });
     </script>
 </body>
 </html>
