@@ -139,6 +139,9 @@
         const number = getRandomNumber();
         if (!number) return;
         calledNumbers.add(number);
+       
+        // Save the called numbers to localStorage
+    localStorage.setItem('called_numbers', JSON.stringify(Array.from(calledNumbers)));
 
         const [letter, num] = [number[0], parseInt(number.slice(1))];
         const numberElement = [...rows[letter].children].find(
