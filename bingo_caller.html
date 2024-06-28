@@ -233,12 +233,13 @@
         const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
         const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
         totalBetAmountElement.textContent = `Total Bet Amount: $${reducedBetAmount.toFixed(2)}`;
-    } else {
+    }
+    else {
         totalBetAmountElement.textContent = 'Total Bet Amount: $0';
     }
 }
 
-    }
+    
 
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
