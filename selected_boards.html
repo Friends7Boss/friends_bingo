@@ -3,126 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selected Bingo Boards</title>
+    <title>Bingo Caller</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .bingo-board {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            width: 100%;
-            margin-bottom: 20px;
-            border: 2px solid blue;
-            padding: 10px;
-            background-color: #f8f9fa;
-        }
-        .bingo-board div {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border: 1px solid blue;
-            background-color: #fff;
-            cursor: pointer;
-        }
-        .bingo-board .header {
-            font-weight: bold;
-        }
-        .bingo-board .header-b {
-            background-color: red;
-            color: white;
-        }
-        .bingo-board .header-i {
-            background-color: #ffa500;
-            color: white;
-        }
-        .bingo-board .header-n {
-            background-color: #ffff00;
-            color: black;
-        }
-        .bingo-board .header-g {
-            background-color: #008000;
-            color: white;
-        }
-        .bingo-board .header-o {
-            background-color: #0000ff;
-            color: white;
-        }
-        .bingo-board .free {
-            background-color: aqua;
-            color: white;
-        }
-        .board-title {
-            grid-column: span 5;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .marked {
-            background-color: yellow;
-        }
+        .called-number { font-size: 2rem; margin-top: 20px; font-weight: bold; }
+        .numbers-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; color: #fff; }
+        .row { display: flex; align-items: center; margin-bottom: 10px; }
+        .row h2 { width: 30px; margin-right: 10px; font-size: 2rem; background-color: darkslateblue; color: #f8f9fa; }
+        .number { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border: 2px solid #000; border-radius: 5px; font-weight: bold; margin-right: 5px; background-color: rgb(3, 25, 65); }
+        .called { background-color: rgb(21, 153, 230); }
+        .called-numbers-container { display: flex; flex-direction: row; flex-wrap: wrap; margin-top: 20px; }
+        .called-number-item { margin-right: 10px; font-size: 1.5rem; }
+        .bingo-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; margin-bottom: 20px; border: 2px solid blue; padding: 10px; background-color: #f8f9fa; }
+        .bingo-board div { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid blue; background-color: #fff; }
+        .bingo-board .header { font-weight: bold; }
+        .bingo-board .header-b { background-color: red; color: white; }
+        .bingo-board .header-i { background-color: #ffa500; color: white; }
+        .bingo-board .header-n { background-color: #ffff00; color: black; }
+        .bingo-board .header-g { background-color: #008000; color: white; }
+        .bingo-board .header-o { background-color: #0000ff; color: white; }
+        .bingo-board .free { background-color: aqua; color: white; }
+        .board-title { grid-column: span 5; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .winner { border: 2px solid green; }
+        .result { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
+        .total-bet-amount { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
+        .called-cell { background-color: lightgreen; }
+        .marked { background-color: yellow; }
     </style>
 </head>
 <body class="bg-light">
-    <div class="container">
-        <h1 class="text-center my-4">Selected Boards</h1>
-        <div id="boards-container"></div>
-        <div class="text-center mt-4">
-            <a href="index.html" class="btn btn-secondary">Go back to Board Selection</a>
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="my-4">Bingo Caller</h1>
+                <div class="form-group">
+                    <label for="interval-select">Select Time Interval:</label>
+                    <select id="interval-select" class="form-control w-25 mx-auto" aria-label="Select time interval">
+                        <option value="5">5 seconds</option>
+                        <option value="3">3 seconds</option>
+                    </select>
+                </div>
+                <button id="call-number-button" class="btn btn-primary">Start Calling Numbers</button>
+                <button id="play-pause-button" class="btn btn-secondary">Pause</button>
+                <div class="form-group mt-4">
+                    <input type="number" id="board-number-input" class="form-control w-25 mx-auto" placeholder="Enter Board Number" aria-label="Enter board number">
+                    <button id="check-winner-button" class="btn btn-success mt-2">Check Winner</button>
+                </div>
+                <div id="countdown" class="called-number"></div>
+                <div id="called-number" class="called-number"></div>
+                <div id="called-numbers-container" class="called-numbers-container"></div>
+                <div id="numbers-container" class="numbers-container">
+                    <div class="row" id="row-B">
+                        <h2>B</h2>
+                    </div>
+                    <div class="row" id="row-I">
+                        <h2>I</h2>
+                    </div>
+                    <div class="row" id="row-N">
+                        <h2>N</h2>
+                    </div>
+                    <div class="row" id="row-G">
+                        <h2>G</h2>
+                    </div>
+                    <div class="row" id="row-O">
+                        <h2>O</h2>
+                    </div>
+                </div>
+                <div id="boards-container"></div>
+                <div id="result" class="result"></div>
+                <div id="total-bet-amount" class="total-bet-amount"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        function renderBingoBoard(board, boardIndex) {
-            const boardContainer = document.createElement('div');
-            boardContainer.classList.add('bingo-board', 'shadow-sm', 'rounded', 'mb-4');
+        document.addEventListener('DOMContentLoaded', () => {
+            const intervalSelect = document.getElementById('interval-select');
+            const callNumberButton = document.getElementById('call-number-button');
+            const playPauseButton = document.getElementById('play-pause-button');
+            const checkWinnerButton = document.getElementById('check-winner-button');
+            const countdownElement = document.getElementById('countdown');
+            const calledNumberElement = document.getElementById('called-number');
+            const calledNumbersContainer = document.getElementById('called-numbers-container');
+            const resultElement = document.getElementById('result');
+            const totalBetAmountElement = document.getElementById('total-bet-amount');
+            const rows = {
+                B: document.getElementById('row-B'),
+                I: document.getElementById('row-I'),
+                N: document.getElementById('row-N'),
+                G: document.getElementById('row-G'),
+                O: document.getElementById('row-O')
+            };
+            const boardsContainer = document.getElementById('boards-container');
 
-            const title = document.createElement('div');
-            title.classList.add('board-title');
-            title.textContent = `Board ${boardIndex + 1}`;
-            boardContainer.appendChild(title);
+            const numbers = {
+                B: Array.from({ length: 15 }, (_, i) => i + 1),
+                I: Array.from({ length: 15 }, (_, i) => i + 16),
+                N: Array.from({ length: 15 }, (_, i) => i + 31),
+                G: Array.from({ length: 15 }, (_, i) => i + 46),
+                O: Array.from({ length: 15 }, (_, i) => i + 61),
+            };
 
-            const headers = ['B', 'I', 'N', 'G', 'O'];
-            const headerClasses = ['header-b', 'header-i', 'header-n', 'header-g', 'header-o'];
-            headers.forEach((header, index) => {
-                const headerCell = document.createElement('div');
-                headerCell.textContent = header;
-                headerCell.classList.add('header', headerClasses[index]);
-                boardContainer.appendChild(headerCell);
-            });
+            const calledNumbers = new Set();
+            let intervalId = null;
+            let paused = false;
 
-            for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 5; j++) {
-                    const cellElement = document.createElement('div');
-                    cellElement.textContent = board[i][j];
-                    if (board[i][j] === 'FREE') {
-                        cellElement.classList.add('free');
+            function initializeBoard() {
+                for (const [letter, nums] of Object.entries(numbers)) {
+                    for (const num of nums) {
+                        const div = document.createElement('div');
+                        div.classList.add('number');
+                        div.textContent = num;
+                        div.dataset.number = `${letter}${num}`;
+                        rows[letter].appendChild(div);
                     }
-                    cellElement.addEventListener('click', () => {
-                        cellElement.classList.toggle('marked');
-                    });
-                    boardContainer.appendChild(cellElement);
                 }
             }
 
-            return boardContainer;
-        }
+            function getRandomNumber() {
+                const availableNumbers = [];
+                for (const [letter, nums] of Object.entries(numbers)) {
+                    for (const num of nums) {
+                        const number = `${letter}${num}`;
+                        if (!calledNumbers.has(number)) {
+                            availableNumbers.push(number);
+                        }
+                    }
+                }
+                if (availableNumbers.length === 0) return null;
+                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+                return availableNumbers[randomIndex];
+            }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const boardsContainer = document.getElementById('boards-container');
-            const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-            const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+            function callNumber() {
+                const number = getRandomNumber();
+                if (!number) return;
+                calledNumbers.add(number);
 
-            if (selectedIndices && selectedIndices.length > 0) {
-                selectedIndices.forEach(selectedIndex => {
-                    const board = boards[selectedIndex];
-                    const boardElement = renderBingoBoard(board, selectedIndex);
+                const [letter, num] = [number[0], parseInt(number.slice(1))];
+                const numberElement = [...rows[letter].children].find(
+                    (div) => parseInt(div.textContent) === num
+                );
+                numberElement.classList.add('called');
+
+                calledNumberElement.textContent = number;
+                const calledNumberItem = document.createElement('div');
+                calledNumberItem.classList.add('called-number-item');
+                calledNumberItem.textContent = number;
+                calledNumbersContainer.appendChild(calledNumberItem);
+
+                markBoards(number);
+            }
+
+            function markBoards(number) {
+                const boards = getLocalStorageItem('bingo_boards');
+                const selectedIndices = getLocalStorageItem('selected_boards');
+
+                if (!selectedIndices || !boards) return;
+
+                selectedIndices.forEach(index => {
+                    const board = boards[index];
+                    for (let row = 0; row < 5; row++) {
+                        for (let col = 0; col < 5; col++) {
+                            if (board[row][col] === number) {
+                                board[row][col] = 'CALLED';
+                            }
+                        }
+                    }
+                });
+
+                updateBoardsDisplay();
+            }
+
+            function updateBoardsDisplay() {
+                const boards = getLocalStorageItem('bingo_boards');
+                const selectedIndices = getLocalStorageItem('selected_boards');
+                boardsContainer.innerHTML = '';
+
+                if (!selectedIndices || !boards) return;
+
+                selectedIndices.forEach(index => {
+                    const board = boards[index];
+                    const boardElement = renderBingoBoard(board, index);
                     boardsContainer.appendChild(boardElement);
                 });
-            } else {
-                boardsContainer.innerHTML = '<p class="text-center">No boards selected.</p>';
             }
+
+            function startCallingNumbers() {
+                const interval = parseInt(intervalSelect.value) * 1000;
+                callNumber();
+                intervalId = setInterval(() => {
+                    if (!paused) callNumber();
+                }, interval);
+            }
+
+            function stopCallingNumbers() {
+                clearInterval(intervalId);
+            }
+
+            function checkWinner() {
+                const boardNumber = parseInt(document.getElementById('board-number-input').value);
+                if (isNaN(boardNumber) || boardNumber < 1) {
+                    resultElement.textContent = 'Please enter a valid board number.';
+                    return;
+                }
+
+                const boards = getLocalStorageItem('bingo_boards');
+                const selectedIndices = getLocalStorageItem('selected_boards');
+
+                if (!boards || boardNumber > boards.length) {
+                    resultElement.textContent = 'Board number not found.';
+                    return;
+                }
+
+                if (!selectedIndices.includes(boardNumber - 1)) {
+                    resultElement.textContent = `Board number ${boardNumber} is not registered.`;
+                    return;
+                }
+
+                const board = boards[boardNumber - 1];
+                const boardElement = renderBingoBoard(board, boardNumber - 1);
+
+                if (checkBoard(board)) {
+                    boardElement.classList.add('winner');
+                    resultElement.textContent = `We have a winner! Board number ${boardNumber}`;
+                } else {
+                    resultElement.textContent = `Board number ${boardNumber} has not won yet.`;
+                }
+
+                boardsContainer.innerHTML = ''; // Clear previous boards
+                boardsContainer.appendChild(boardElement);
+            }
+
+            function checkBoard(board) {
+                const winningPatterns = [
+                    // Horizontal patterns
+                    [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
+                    [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
+                    [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
+                    [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4]],
+                    [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
+                    // Vertical patterns
+                    [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+                    [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]],
+                    [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2]],
+                    [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]],
+                    [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4]],
+                    // Diagonal patterns
+                    [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]],
+                    [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                    // Corners and free spot patterns
+                    [[0, 0], [0, 4], [2, 2], [4, 0], [4, 4]],
+                    // Full board pattern
+                    [...Array(5).keys()].flatMap(i => [...Array(5).keys()].map(j => [i, j]))
+                ];
+
+                for (const pattern of winningPatterns) {
+                    if (pattern.every(([r, c]) => board[r][c] === 'FREE' || board[r][c] === 'CALLED')) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function renderBingoBoard(board, index) {
+                const boardElement = document.createElement('div');
+                boardElement.classList.add('bingo-board');
+                boardElement.innerHTML = `
+                    <div class="board-title">Board ${index + 1}</div>
+                    <div class="header header-b">B</div>
+                    <div class="header header-i">I</div>
+                    <div class="header header-n">N</div>
+                    <div class="header header-g">G</div>
+                    <div class="header header-o">O</div>
+                `;
+                board.forEach((row, rowIndex) => {
+                    row.forEach((cell, cellIndex) => {
+                        const cellElement = document.createElement('div');
+                        cellElement.textContent = cell === 'CALLED' ? cell.replace('CALLED', '') : cell;
+                        if (cell === 'FREE') {
+                            cellElement.classList.add('free');
+                        } else if (calledNumbers.has(cell.toString()) || cell === 'CALLED') {
+                            cellElement.classList.add('called-cell');
+                        }
+                        boardElement.appendChild(cellElement);
+                    });
+                });
+                return boardElement;
+            }
+
+            function displayTotalBetAmount() {
+                const selectedIndices = getLocalStorageItem('selected_boards');
+                const betAmount = localStorage.getItem('bet_amount');
+                if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+                    const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+                    totalBetAmountElement.textContent = `Total Bet Amount: $${totalBetAmount.toFixed(2)}`;
+                } else {
+                    totalBetAmountElement.textContent = 'Total Bet Amount: $0';
+                }
+            }
+
+            function getLocalStorageItem(key) {
+                try {
+                    return JSON.parse(localStorage.getItem(key));
+                } catch (e) {
+                    console.error(`Error parsing localStorage key "${key}":`, e);
+                    return null;
+                }
+            }
+
+            callNumberButton.addEventListener('click', startCallingNumbers);
+            playPauseButton.addEventListener('click', () => {
+                paused = !paused;
+                playPauseButton.textContent = paused ? 'Resume' : 'Pause';
+            });
+            checkWinnerButton.addEventListener('click', checkWinner);
+
+            initializeBoard();
+            displayTotalBetAmount();
+            updateBoardsDisplay();
         });
     </script>
 </body>
