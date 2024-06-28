@@ -110,9 +110,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const boardsContainer = document.getElementById('boards-container');
-            const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-            const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+                        const boardsContainer = document.getElementById('boards-container');
+                        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
+                        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
 
             if (selectedIndices && selectedIndices.length > 0) {
                 selectedIndices.forEach(selectedIndex => {
@@ -127,3 +127,4 @@
     </script>
 </body>
 </html>
+
