@@ -95,13 +95,14 @@
                 boardContainer.appendChild(headerCell);
             });
 
-            for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 5; j++) {
+            for (let col = 0; col < 5; col++) {
+                for (let row = 0; row < 5; row++) {
                     const cellElement = document.createElement('div');
-                    cellElement.textContent = board[i][j];
-                    if (board[i][j] === 'FREE') {
+                    const cellValue = board[row][col];
+                    cellElement.textContent = cellValue;
+                    if (cellValue === 'FREE') {
                         cellElement.classList.add('free');
-                    } else if (calledNumbers.has(board[i][j])) {
+                    } else if (calledNumbers.has(cellValue)) {
                         cellElement.classList.add('called');
                     }
                     cellElement.addEventListener('click', () => {
