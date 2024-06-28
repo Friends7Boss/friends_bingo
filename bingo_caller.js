@@ -1,4 +1,4 @@
-   <script>
+ 
         document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
@@ -170,4 +170,4 @@
     displayTotalBetAmount();
 });
 
-    </script>
+
