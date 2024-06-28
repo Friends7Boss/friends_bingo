@@ -1,3 +1,4 @@
+♪♫•*¨*•.¸¸eyoel el¸.•*¨*•♫♪, [6/28/2024 5:34 PM]
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,7 +62,9 @@
                     </div>
                     <div class="row" id="row-N">
                         <h2>N</h2>
-                    </div>
+
+♪♫•*¨*•.¸¸eyoel el¸.•*¨*•♫♪, [6/28/2024 5:34 PM]
+</div>
                     <div class="row" id="row-G">
                         <h2>G</h2>
                     </div>
@@ -76,8 +79,8 @@
         </div>
     </div>
 <script>
-   
-document.addEventListener('DOMContentLoaded', () => {
+     
+        document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
     const playPauseButton = document.getElementById('play-pause-button');
@@ -90,11 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = {
         B: document.getElementById('row-B'),
         I: document.getElementById('row-I'),
-        N: document.getElementById('row-N'),
+        N: document.getElementById('row-N'), 
         G: document.getElementById('row-G'),
         O: document.getElementById('row-O')
     };
-    const boardsContainer = document.getElementById('boards-container');
 
     const numbers = {
         B: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -140,6 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!number) return;
         calledNumbers.add(number);
 
+        // Save the called numbers to localStorage
+        localStorage.setItem('called_numbers', JSON.stringify(Array.from(calledNumbers)));
+
         const [letter, num] = [number[0], parseInt(number.slice(1))];
         const numberElement = [...rows[letter].children].find(
             (div) => parseInt(div.textContent) === num
@@ -151,42 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         calledNumberItem.classList.add('called-number-item');
         calledNumberItem.textContent = number;
         calledNumbersContainer.appendChild(calledNumberItem);
-
-        markBoards(number);
-    }
-
-    function markBoards(number) {
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
-        if (!selectedIndices || !boards) return;
-
-        selectedIndices.forEach(index => {
-            const board = boards[index];
-            for (let row = 0; row < 5; row++) {
-                for (let col = 0; col < 5; col++) {
-                    if (board[row][col] === number) {
-                        board[row][col] = 'CALLED';
-                    }
-                }
-            }
-        });
-
-        updateBoardsDisplay();
-    }
-
-    function updateBoardsDisplay() {
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        boardsContainer.innerHTML = '';
-
-        if (!selectedIndices || !boards) return;
-
-selectedIndices.forEach(index => {
-            const board = boards[index];
-            const boardElement = renderBingoBoard(board, index);
-            boardsContainer.appendChild(boardElement);
-        });
     }
 
     function startCallingNumbers() {
@@ -201,9 +170,10 @@ selectedIndices.forEach(index => {
         clearInterval(intervalId);
     }
 
-    function checkWinner() {
+♪♫•*¨*•.¸¸eyoel el¸.•*¨*•♫♪, [6/28/2024 5:34 PM]
+function checkWinner() {
         const boardNumber = parseInt(document.getElementById('board-number-input').value);
-        if (isNaN(boardNumber) || boardNumber < 1) {
+        if (isNaN(boardNumber)  boardNumber < 1) {
             resultElement.textContent = 'Please enter a valid board number.';
             return;
         }
@@ -211,7 +181,7 @@ selectedIndices.forEach(index => {
         const boards = JSON.parse(localStorage.getItem('bingo_boards'));
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
 
-        if (!boards || boardNumber > boards.length) {
+        if (!boards  boardNumber > boards.length) {
             resultElement.textContent = 'Board number not found.';
             return;
         }
@@ -222,17 +192,11 @@ selectedIndices.forEach(index => {
         }
 
         const board = boards[boardNumber - 1];
-        const boardElement = renderBingoBoard(board, boardNumber - 1);
-
         if (checkBoard(board)) {
-            boardElement.classList.add('winner');
             resultElement.textContent = We have a winner! Board number ${boardNumber};
         } else {
             resultElement.textContent = Board number ${boardNumber} has not won yet.;
         }
-
-        boardsContainer.innerHTML = ''; // Clear previous boards
-        boardsContainer.appendChild(boardElement);
     }
 
     function checkBoard(board) {
@@ -266,61 +230,20 @@ selectedIndices.forEach(index => {
         return false;
     }
 
-    function renderBingoBoard(board, index) {
-        const boardElement = document.createElement('div');
-        boardElement.classList.add('bingo-board');
-        boardElement.innerHTML = 
-            <div class="board-title">Board ${index + 1}</div>
-            <div class="header header-b">B</div>
-            <div class="header header-i">I</div>
-            <div class="header header-n">N</div>
-            <div class="header header-g">G</div>
-            <div class="header header-o">O</div>
-        ;
-        board.forEach((row, rowIndex) => {
-            row.forEach((cell, cellIndex) => {
-                const cellElement = document.createElement('div');
-                cellElement.textContent = cell === 'CALLED' ? cell.replace('CALLED', '') : cell;
-
-
-if (cell === 'FREE') {
-                    cellElement.classList.add('free');
-                } else if (calledNumbers.has(cell.toString()) || cell === 'CALLED') {
-                    cellElement.classList.add('called-cell');
-                }
-                boardElement.appendChild(cellElement);
-            });
-        });
-        return boardElement;
-    }
-
     function displayTotalBetAmount() {
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        const betAmount = localStorage.getItem('bet_amount');
-        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-            totalBetAmountElement.textContent = Total Bet Amount: $${totalBetAmount.toFixed(2)};
-        } else {
-            totalBetAmountElement.textContent = 'Total Bet Amount: $0';
-        }
+    const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+    const betAmount = localStorage.getItem('bet_amount');
+    if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+        const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+        const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
+        totalBetAmountElement.textContent = Total Bet Amount: $${reducedBetAmount.toFixed(2)};
     }
+    else {
+        totalBetAmountElement.textContent = 'Total Bet Amount: $0';
+    }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
-        if (selectedIndices && selectedIndices.length > 0) {
-            selectedIndices.forEach(index => {
-                const board = boards[index];
-                const boardElement = renderBingoBoard(board, index);
-                boardsContainer.appendChild(boardElement);
-            });
-        } else {
-            boardsContainer.innerHTML = '<p class="text-center">No boards selected.</p>';
-        }
-
-        displayTotalBetAmount();
-    });
+    
 
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
@@ -330,6 +253,7 @@ if (cell === 'FREE') {
     checkWinnerButton.addEventListener('click', checkWinner);
 
     initializeBoard();
+    displayTotalBetAmount();
 });
 
 
