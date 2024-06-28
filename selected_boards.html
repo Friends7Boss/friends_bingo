@@ -19,7 +19,7 @@
         .bingo-board div {
             display: flex;
             align-items: center;
-            justify-content: center; 
+            justify-content: center;
             width: 40px;
             height: 40px;
             border: 1px solid blue;
@@ -101,10 +101,11 @@
                     cellElement.textContent = board[i][j];
                     if (board[i][j] === 'FREE') {
                         cellElement.classList.add('free');
+                    } else {
+                        cellElement.addEventListener('click', () => {
+                            cellElement.classList.toggle('marked');
+                        });
                     }
-                    cellElement.addEventListener('click', () => {
-                        cellElement.classList.toggle('marked');
-                    });
                     boardContainer.appendChild(cellElement);
                 }
             }
