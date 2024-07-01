@@ -232,7 +232,7 @@
         if (selectedIndices && selectedIndices.length > 0 && betAmount) {
             const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
             const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
-            totalBetAmountElement.textContent = `Total Bet Amount: $${totalBetAmount.toFixed(2)}`;
+            totalBetAmountElement.textContent = `Total Bet Amount: $${reducedBetAmount.toFixed(2)}`;
         } else {
             totalBetAmountElement.textContent = 'Total Bet Amount: $0';
         }
