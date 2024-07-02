@@ -167,7 +167,7 @@
         clearInterval(intervalId);
     }
 
-  function checkWinner() {
+function checkWinner() {
     const boardNumber = parseInt(document.getElementById('board-number-input').value);
     if (isNaN(boardNumber) || boardNumber < 1) {
         resultElement.textContent = 'Please enter a valid board number.';
@@ -227,8 +227,6 @@ function checkBoard(board) {
     }
     return false;
 }
-
-
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
         const betAmount = localStorage.getItem('bet_amount');
