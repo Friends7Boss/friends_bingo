@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unique Bingo Board</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+     <link rel="stylesheet" href="style.css">
     <style>
          .text-center h1 {
             color: blue;
@@ -110,6 +111,40 @@
             </div>
         </div>
     </div>
+      <div class="container text-center">
+        <div class="grid-container">
+            <div class="grid-header">B</div>
+            <div class="grid-header">I</div>
+            <div class="grid-header">N</div>
+            <div class="grid-header">G</div>
+            <div class="grid-header">O</div>
+        <!-- Generate 25 grid items for the 5x5 grid -->
+        <div class="grid-item" id="cell1"></div>
+        <div class="grid-item" id="cell2"></div>
+        <div class="grid-item" id="cell3"></div>
+        <div class="grid-item" id="cell4"></div>
+        <div class="grid-item" id="cell5"></div>
+        <div class="grid-item" id="cell6"></div>
+        <div class="grid-item" id="cell7"></div>
+        <div class="grid-item" id="cell8"></div>
+        <div class="grid-item" id="cell9"></div>
+        <div class="grid-item" id="cell10"></div>
+        <div class="grid-item" id="cell11"></div>
+        <div class="grid-item" id="cell12"></div>
+        <div class="grid-item free" id="cell13">FREE</div>
+        <div class="grid-item" id="cell14"></div>
+        <div class="grid-item" id="cell15"></div>
+        <div class="grid-item" id="cell16"></div>
+        <div class="grid-item" id="cell17"></div>
+        <div class="grid-item" id="cell18"></div>
+        <div class="grid-item" id="cell19"></div>
+        <div class="grid-item" id="cell20"></div>
+        <div class="grid-item" id="cell21"></div>
+        <div class="grid-item" id="cell22"></div>
+        <div class="grid-item" id="cell23"></div>
+        <div class="grid-item" id="cell24"></div>
+        <div class="grid-item" id="cell25"></div>
+    </div>
 
     <script>
         function shuffle(array) {
@@ -202,5 +237,6 @@
             });
         });
     </script>
+          <script src="script.js"></script>
 </body>
 </html>
