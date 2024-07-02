@@ -167,64 +167,67 @@
         clearInterval(intervalId);
     }
 
-    function checkWinner() {
-        const boardNumber = parseInt(document.getElementById('board-number-input').value);
-        if (isNaN(boardNumber) || boardNumber < 1) {
-            resultElement.textContent = 'Please enter a valid board number.';
-            return;
-        }
-
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
-        if (!boards || boardNumber > boards.length) {
-            resultElement.textContent = 'Board number not found.';
-            return;
-        }
-
-        if (!selectedIndices.includes(boardNumber - 1)) {
-            resultElement.textContent = `Board number ${boardNumber} is not registered.`;
-            return;
-        }
-
-        const board = boards[boardNumber - 1];
-        if (checkBoard(board)) {
-            resultElement.textContent = `We have a winner! Board number ${boardNumber}`;
-        } else {
-            resultElement.textContent = `Board number ${boardNumber} has not won yet.`;
-        }
+  function checkWinner() {
+    const boardNumber = parseInt(document.getElementById('board-number-input').value);
+    if (isNaN(boardNumber) || boardNumber < 1) {
+        resultElement.textContent = 'Please enter a valid board number.';
+        return;
     }
 
-    function checkBoard(board) {
-        const winningPatterns = [
-            // Horizontal patterns
-            [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
-            [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
-            [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
-            [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4]],
-            [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
-            // Vertical patterns
-            [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
-            [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]],
-            [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2]],
-            [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]],
-            [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4]],
-            // Diagonal patterns
-            [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]],
-            [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
-            // Corners and free spot patterns
-            [[0, 0], [0, 4], [2, 2], [4, 0], [4, 4]],
-            // Full board pattern
-            [...Array(5).keys()].flatMap(i => [...Array(5).keys()].map(j => [i, j]))
-        ];
+    const boards = JSON.parse(localStorage.getItem('bingo_boards'));
+    const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
 
-        for (const pattern of winningPatterns) {
-            if (pattern.every(([r, c]) => board[r][c] === 'FREE' || board[r][c] === 'CALLED')) {
-                return true;
-            }
-        }
-        return false;
+    if (!boards || boardNumber > boards.length) {
+        resultElement.textContent = 'Board number not found.';
+        return;
     }
+
+    if (!selectedIndices.includes(boardNumber - 1)) {
+        resultElement.textContent = `Board number ${boardNumber} is not registered.`;
+        return;
+    }
+
+    const board = boards[boardNumber - 1];
+    if (checkBoard(board)) {
+        resultElement.textContent = `We have a winner! Board number ${boardNumber}`;
+    } else {
+        resultElement.textContent = `Board number ${boardNumber} has not won yet.`;
+    }
+}
+
+function checkBoard(board) {
+    const winningPatterns = [
+        // Horizontal patterns
+        [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
+        [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
+        [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
+        [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4]],
+        [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
+        // Vertical patterns
+        [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+        [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]],
+        [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2]],
+        [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]],
+        [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4]],
+        // Diagonal patterns
+        [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]],
+        [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+        // Adjacent to free cell diagonal patterns
+        [[1, 1], [2, 2], [3, 3], [1, 3], [3, 1]],
+        // Corners and free spot patterns
+        [[0, 0], [0, 4], [2, 2], [4, 0], [4, 4]],
+        // Full board pattern
+        [...Array(5).keys()].flatMap(i => [...Array(5).keys()].map(j => [i, j]))
+    ];
+
+    for (const pattern of winningPatterns) {
+        if (pattern.every(([r, c]) => board[r][c] === 'FREE' || board[r][c] === 'CALLED')) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
