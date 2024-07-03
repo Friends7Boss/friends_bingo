@@ -100,11 +100,8 @@
             const callNumberButton = document.getElementById('call-number-button');
             const playPauseButton = document.getElementById('play-pause-button');
             const checkWinnerButton = document.getElementById('check-winner-button');
-            const countdownElement = document.getElementById('countdown');
             const calledNumberElement = document.getElementById('called-number');
             const calledNumbersContainer = document.getElementById('called-numbers-container');
-            const resultElement = document.getElementById('result');
-            const totalBetAmountElement = document.getElementById('total-bet-amount');
             const winnerModalBody = document.getElementById('winner-modal-body');
             const rows = {
                 B: document.getElementById('row-B'),
@@ -238,7 +235,7 @@
                 ];
 
                 for (const pattern of winningPatterns) {
-                    if (pattern.every(([r, c]) => board[r][c] === 'FREE' || board[r][c] === 'CALLED')) {
+                    if (pattern.every(([r, c]) => calledNumbers.has(`${'BINGO'[c]}${board[r][c]}`) || board[r][c] === 'FREE')) {
                         return true;
                     }
                 }
@@ -254,8 +251,8 @@
                 for (let r = 0; r < board.length; r++) {
                     for (let c = 0; c < board[r].length; c++) {
                         const cellValue = board[r][c];
-                        const cellElement = document.querySelector(`[data-number="${cellValue}"]`);
-                        if (cellElement && calledNumbers.has(cellValue)) {
+                        const cellElement = document.querySelector(`[data-number="${'BINGO'[c]}${cellValue}"]`);
+                        if (cellElement && calledNumbers.has(`${'BINGO'[c]}${cellValue}`)) {
                             cellElement.classList.add('marked');
                         }
                     }
