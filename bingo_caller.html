@@ -207,12 +207,8 @@
                 }
 
                 const board = boards[boardNumber - 1];
-                if (checkBoard(board)) {
-                    showModal(`We have a winner! Board number ${boardNumber}`);
-                } else {
-                    showModal(`Board number ${boardNumber} has not won yet.`);
-                }
-
+                const hasWon = checkBoard(board);
+                showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`);
                 markCalledNumbers(board);
             }
 
@@ -250,7 +246,7 @@
             }
 
             function showModal(message) {
-                winnerModalBody.textContent = message;
+                winnerModalBody.innerHTML = `<p>${message}</p>`;
                 $('#winnerModal').modal('show');
             }
 
