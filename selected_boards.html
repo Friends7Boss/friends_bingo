@@ -63,6 +63,10 @@
             background-color: yellow;
             color: blue;
         }
+        .called {
+            background-color: lightgreen;
+            color: blue;
+        }
         .bingo-board div:hover {
             background-color: blue;
         }
@@ -78,7 +82,7 @@
     </div>
 
     <script>
-        function renderBingoBoard(board, boardIndex) {
+        function renderBingoBoard(board, boardIndex, calledNumbers) {
             const boardContainer = document.createElement('div');
             boardContainer.classList.add('bingo-board', 'shadow-sm', 'rounded', 'mb-4');
 
@@ -100,9 +104,15 @@
                 for (let j = 0; j < 5; j++) {
                     const cellElement = document.createElement('div');
                     cellElement.textContent = board[i][j];
-                    if (board[i][j] === 'FREE') {
+                    const cellValue = board[i][j];
+
+                    if (cellValue === 'FREE') {
                         cellElement.classList.add('free');
                     } else {
+                        const cellId = `${headers[j]}${cellValue}`;
+                        if (calledNumbers.has(cellId)) {
+                            cellElement.classList.add('called');
+                        }
                         cellElement.addEventListener('click', () => {
                             cellElement.classList.toggle('marked');
                         });
@@ -118,11 +128,12 @@
             const boardsContainer = document.getElementById('boards-container');
             const boards = JSON.parse(localStorage.getItem('bingo_boards'));
             const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+            const calledNumbers = new Set(JSON.parse(localStorage.getItem('called_numbers')));
 
             if (selectedIndices && selectedIndices.length > 0) {
                 selectedIndices.forEach(selectedIndex => {
                     const board = boards[selectedIndex];
-                    const boardElement = renderBingoBoard(board, selectedIndex);
+                    const boardElement = renderBingoBoard(board, selectedIndex, calledNumbers);
                     boardsContainer.appendChild(boardElement);
                 });
             } else {
@@ -132,4 +143,3 @@
     </script>
 </body>
 </html>
- 
