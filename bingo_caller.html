@@ -30,10 +30,6 @@
                 </div>
                 <button id="call-number-button" class="btn btn-primary">Start Calling Numbers</button>
                 <button id="play-pause-button" class="btn btn-secondary">Pause</button>
-                <div class="form-group mt-4">
-                    <input type="number" id="board-number-input" class="form-control w-25 mx-auto" placeholder="Enter Board Number">
-                    <button id="check-winner-button" class="btn btn-success mt-2">Check Winner</button>
-                </div>
                 <div id="called-number" class="called-number"></div>
                 <div id="called-numbers-container" class="called-numbers-container"></div>
                 <div id="result" class="result"></div>
@@ -46,7 +42,6 @@
             const intervalSelect = document.getElementById('interval-select');
             const callNumberButton = document.getElementById('call-number-button');
             const playPauseButton = document.getElementById('play-pause-button');
-            const checkWinnerButton = document.getElementById('check-winner-button');
             const calledNumberElement = document.getElementById('called-number');
             const calledNumbersContainer = document.getElementById('called-numbers-container');
             const resultElement = document.getElementById('result');
@@ -100,168 +95,11 @@
                 }, interval);
             }
 
-            function openWinnerPopup(board, boardNumber, resultText) {
-                const popup = window.open('', '', 'width=600,height=400');
-                popup.document.write(`
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Bingo Winner</title>
-                        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-                        <style>
-                            .bingo-board {
-                                display: grid;
-                                grid-template-columns: repeat(5, 1fr);
-                                gap: 5px;
-                                width: 100%;
-                                margin-bottom: 20px;
-                                border: 2px solid blue;
-                                padding: 10px;
-                                background-color: #f8f9fa;
-                            }
-                            .bingo-board div {
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                width: 40px;
-                                height: 40px;
-                                border: 1px solid blue;
-                                background-color: #fff;
-                                cursor: pointer;
-                            }
-                            .bingo-board .header {
-                                font-weight: bold;
-                            }
-                            .bingo-board .free {
-                                background-color: aqua;
-                                color: white;
-                            }
-                            .marked {
-                                background-color: yellow;
-                            }
-                            .called {
-                                background-color: lightgreen;
-                            }
-                        </style>
-                    </head>
-                    <body class="bg-light">
-                        <div class="container">
-                            <h1 class="text-center my-4">Board ${boardNumber}</h1>
-                            <div id="board-container" class="bingo-board"></div>
-                            <div class="text-center mt-4">
-                                <h3>${resultText}</h3>
-                            </div>
-                        </div>
-                        <script>
-                            const boardContainer = document.getElementById('board-container');
-                            const calledNumbers = new Set(${JSON.stringify(Array.from(calledNumbers))});
-                            const headers = ['B', 'I', 'N', 'G', 'O'];
-
-                            headers.forEach(header => {
-                                const headerCell = document.createElement('div');
-                                headerCell.textContent = header;
-                                headerCell.classList.add('header');
-                                boardContainer.appendChild(headerCell);
-                            });
-
-                            for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
-                                for (let colIndex = 0; colIndex < 5; colIndex++) {
-                                    const cellElement = document.createElement('div');
-                                    const cellValue = board[rowIndex][colIndex];
-                                    cellElement.textContent = cellValue;
-                                    if (cellValue === 'FREE') {
-                                        cellElement.classList.add('free');
-                                    } else if (calledNumbers.has(cellValue)) {
-                                        cellElement.classList.add('called');
-                                    }
-                                    boardContainer.appendChild(cellElement);
-                                }
-                            }
-                        </script>
-                    </body>
-                    </html>
-                `);
-            }
-
-            function checkWinner() {
-                const boardNumber = parseInt(document.getElementById('board-number-input').value);
-                if (isNaN(boardNumber) || boardNumber < 1) {
-                    resultElement.textContent = 'Please enter a valid board number.';
-                    return;
-                }
-
-                const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
-                if (!boards || boardNumber > boards.length) {
-                    resultElement.textContent = 'Board number not found.';
-                    return;
-                }
-
-                if (!selectedIndices.includes(boardNumber - 1)) {
-                                        resultElement.textContent = `Board number ${boardNumber} is not registered.`;
-                    return;
-                }
-
-                const board = boards[boardNumber - 1];
-                const isWinner = checkBoard(board);
-                const resultText = isWinner ? `We have a winner! Board number ${boardNumber}` : `Board number ${boardNumber} has not won yet.`;
-                
-                // Open the pop-up window with the board and result
-                openWinnerPopup(board, boardNumber, resultText);
-            }
-
-            function checkBoard(board) {
-                const winningPatterns = [
-                    // Diagonal patterns
-                    [0, 6, 12, 18, 24],
-                    [4, 8, 12, 16, 20],
-                    // Horizontal patterns
-                    [0, 1, 2, 3, 4],
-                    [5, 6, 7, 8, 9],
-                    [10, 11, 12, 13, 14],
-                    [15, 16, 17, 18, 19],
-                    [20, 21, 22, 23, 24],
-                    // Vertical patterns
-                    [0, 5, 10, 15, 20],
-                    [1, 6, 11, 16, 21],
-                    [2, 7, 12, 17, 22],
-                    [3, 8, 13, 18, 23],
-                    [4, 9, 14, 19, 24],
-                    // Four corners pattern
-                    [0, 4, 20, 24]
-                ];
-
-                const boardNumbers = board.flat().map(cell => {
-                    if (cell === 'FREE') return 'FREE';
-                    const match = cell.match(/^([BINGO])(\d+)$/);
-                    if (!match) return null;
-                    const [_, letter, number] = match;
-                    return number;
-                });
-
-                const calledNumbersList = Array.from(calledNumbers).map(num => {
-                    const match = num.match(/^([BINGO])(\d+)$/);
-                    if (!match) return null;
-                    const [_, letter, number] = match;
-                    return number;
-                });
-
-                return winningPatterns.some(pattern => 
-                    pattern.every(index => 
-                        boardNumbers[index] === 'FREE' || calledNumbersList.includes(boardNumbers[index])
-                    )
-                );
-            }
-
             callNumberButton.addEventListener('click', startCallingNumbers);
             playPauseButton.addEventListener('click', () => {
                 paused = !paused;
                 playPauseButton.textContent = paused ? 'Resume' : 'Pause';
             });
-            checkWinnerButton.addEventListener('click', checkWinner);
         });
     </script>
 </body>
