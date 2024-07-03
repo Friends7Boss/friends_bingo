@@ -78,6 +78,127 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
+            const intervalSelect = document.getElementById('interval-select');
+            const callNumberButton = document.getElementById('call-number-button');
+            const playPauseButton = document.getElementById('play-pause-button');
+            const checkWinnerButton = document.getElementById('check-winner-button');
+            const countdownElement = document.getElementById('countdown');
+            const calledNumberElement = document.getElementById('called-number');
+            const calledNumbersContainer = document.getElementById('called-numbers-container');
+            const resultElement = document.getElementById('result');
+            const totalBetAmountElement = document.getElementById('total-bet-amount');
+            const rows = {
+                B: document.getElementById('row-B'),
+                I: document.getElementById('row-I'),
+                N: document.getElementById('row-N'),
+                G: document.getElementById('row-G'),
+                O: document.getElementById('row-O')
+            };
+            const boardsContainer = document.getElementById('boards-container');
+
+            const numbers = {
+                B: Array.from({ length: 15 }, (_, i) => i + 1),
+                I: Array.from({ length: 15 }, (_, i) => i + 16),
+                N: Array.from({ length: 15 }, (_, i) => i + 31),
+                G: Array.from({ length: 15 }, (_, i) => i + 46),
+                O: Array.from({ length: 15 }, (_, i) => i + 61),
+            };
+
+            const calledNumbers = new Set();
+            let intervalId = null;
+            let paused = false;
+
+            function initializeBoard() {
+                for (const [letter, nums] of Object.entries(numbers)) {
+                    for (const num of nums) {
+                        const div = document.createElement('div');
+                        div.classList.add('number');
+                        div.textContent = num;
+                        div.dataset.number = ${letter}${num};
+                        rows[letter].appendChild(div);
+                    }
+                }
+            }
+
+            function getRandomNumber() {
+                const availableNumbers = [];
+                for (const [letter, nums] of Object.entries(numbers)) {
+                    for (const num of nums) {
+                        const number = ${letter}${num};
+                        if (!calledNumbers.has(number)) {
+                            availableNumbers.push(number);
+                        }
+                    }
+                }
+                if (availableNumbers.length === 0) return null;
+                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+                return availableNumbers[randomIndex];
+            }
+
+            function callNumber() {
+                const number = getRandomNumber();
+                if (!number) return;
+                calledNumbers.add(number);
+
+                const [letter, num] = [number[0], parseInt(number.slice(1))];
+                const numberElement = [...rows[letter].children].find(
+                    (div) => parseInt(div.textContent) === num
+                );
+                numberElement.classList.add('called');
+
+                calledNumberElement.textContent = number;
+                const calledNumberItem = document.createElement('div');
+                calledNumberItem.classList.add('called-number-item');
+                calledNumberItem.textContent = number;
+                calledNumbersContainer.appendChild(calledNumberItem);
+            }
+
+            function startCallingNumbers() {
+                const interval = parseInt(intervalSelect.value) * 1000;
+                callNumber();
+                intervalId = setInterval(() => {
+                    if (!paused) callNumber();
+                }, interval);
+            }
+
+            function stopCallingNumbers() {
+                clearInterval(intervalId);
+            }
+
+            function checkWinner() {
+                const boardNumber = parseInt(document.getElementById('board-number-input').value);
+                if (isNaN(boardNumber) || boardNumber < 1) {
+                    resultElement.textContent = 'Please enter a valid board number.';
+                    return;
+                }
+
+                const boards = JSON.parse(localStorage.getItem('bingo_boards'));
+                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+
+                if (!boards || boardNumber > boards.length) {
+                    resultElement.textContent = 'Board number not found.';
+                    return;
+                }
+
+                if (!selectedIndices.includes(boardNumber - 1)) {
+                    resultElement.textContent = Board number ${boardNumber} is not registered.;
+                    return;
+                }
+
+                boardsContainer.innerHTML = ''; // Clear previous boards
+
+                const board = boards[boardNumber - 1];
+                const boardElement = renderBingoBoard(board, boardNumber - 1);
+
+                if (checkBoard(board)) {
+                    boardElement.classList.add('winner');
+                    resultElement.textContent = We have a winner! Board number ${boardNumber};
+                } else {
+                    resultElement.textContent = Board number ${boardNumber} has not won yet.;
+                }
+
+                boardsContainer.appendChild(boardElement);
+       document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
     const playPauseButton = document.getElementById('play-pause-button');
@@ -94,7 +215,6 @@
         G: document.getElementById('row-G'),
         O: document.getElementById('row-O')
     };
-    const boardsContainer = document.getElementById('boards-container');
 
     const numbers = {
         B: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -117,6 +237,38 @@
                 div.dataset.number = `${letter}${num}`;
                 rows[letter].appendChild(div);
             }
+
+            function checkBoard(board) {
+                // Check rows
+                for (const row of board) {
+                    if (row.every(cell => cell === 'FREE' || calledNumbers.has(cell.toString()))) {
+                        return true;
+                    }
+                }
+
+                // Check columns
+                for (let col = 0; col < 5; col++) {
+                    let count = 0;
+                    for (let row = 0; row < 5; row++) {
+                        if (board[row][col] === 'FREE' || calledNumbers.has(board[row][col].toString())) {
+                            count++;
+                        }
+                        if (count === 5) {
+                            return true;
+                        }
+                    }
+                }
+
+                // Check diagonals
+                let diagonalCount1 = 0;
+                let diagonalCount2 = 0;
+                for (let i = 0; i < 5; i++) {
+                    if (board[i][i] === 'FREE' || calledNumbers.has(board[i][i].toString())) {
+                        diagonalCount1++;
+                    }
+                    if (board[i][4 - i] === 'FREE' || calledNumbers.has(board[i][4 - i].toString())) {
+                        diagonalCount2++;
+                    }
         }
     }
 
@@ -128,7 +280,48 @@
                 if (!calledNumbers.has(number)) {
                     availableNumbers.push(number);
                 }
+                if (diagonalCount1 === 5 || diagonalCount2 === 5) {
+                    return true;
+                }
+
+                return false;
             }
+
+            function renderBingoBoard(board, index) {
+                const boardElement = document.createElement('div');
+                boardElement.classList.add('bingo-board');
+                boardElement.innerHTML = 
+                    <div class="board-title">Board ${index + 1}</div>
+                    <div class="header header-b">B</div>
+                    <div class="header header-i">I</div>
+                    <div class="header header-n">N</div>
+                    <div class="header header-g">G</div>
+                    <div class="header header-o">O</div>
+                ;
+                board.forEach((row, rowIndex) => {
+                    row.forEach((cell, cellIndex) => {
+                        const cellElement = document.createElement('div');
+                        cellElement.textContent = cell;
+                        if (cell === 'FREE') {
+                            cellElement.classList.add('free');
+                        } else if (calledNumbers.has(cell.toString())) {
+                            cellElement.classList.add('called-cell');
+                        }
+                        boardElement.appendChild(cellElement);
+                    });
+                });
+                return boardElement;
+            }
+
+            function displayTotalBetAmount() {
+                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+                const betAmount = localStorage.getItem('bet_amount');
+                if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+                    const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+                    totalBetAmountElement.textContent = Total Bet Amount: $${totalBetAmount.toFixed(2)};
+                } else {
+                    totalBetAmountElement.textContent = 'Total Bet Amount: $0';
+                }
         }
         if (availableNumbers.length === 0) return null;
         const randomIndex = Math.floor(Math.random() * availableNumbers.length);
@@ -139,6 +332,9 @@
         const number = getRandomNumber();
         if (!number) return;
         calledNumbers.add(number);
+
+        // Save the called numbers to localStorage
+        localStorage.setItem('called_numbers', JSON.stringify(Array.from(calledNumbers)));
 
         const [letter, num] = [number[0], parseInt(number.slice(1))];
         const numberElement = [...rows[letter].children].find(
@@ -151,42 +347,6 @@
         calledNumberItem.classList.add('called-number-item');
         calledNumberItem.textContent = number;
         calledNumbersContainer.appendChild(calledNumberItem);
-
-        markBoards(number);
-    }
-
-    function markBoards(number) {
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
-        if (!selectedIndices || !boards) return;
-
-        selectedIndices.forEach(index => {
-            const board = boards[index];
-            for (let row = 0; row < 5; row++) {
-                for (let col = 0; col < 5; col++) {
-                    if (board[row][col] === number) {
-                        board[row][col] = 'CALLED';
-                    }
-                }
-            }
-        });
-
-        updateBoardsDisplay();
-    }
-
-    function updateBoardsDisplay() {
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        boardsContainer.innerHTML = '';
-
-        if (!selectedIndices || !boards) return;
-
-        selectedIndices.forEach(index => {
-            const board = boards[index];
-            const boardElement = renderBingoBoard(board, index);
-            boardsContainer.appendChild(boardElement);
-        });
     }
 
     function startCallingNumbers() {
@@ -222,17 +382,11 @@
         }
 
         const board = boards[boardNumber - 1];
-        const boardElement = renderBingoBoard(board, boardNumber - 1);
-
         if (checkBoard(board)) {
-            boardElement.classList.add('winner');
             resultElement.textContent = `We have a winner! Board number ${boardNumber}`;
         } else {
             resultElement.textContent = `Board number ${boardNumber} has not won yet.`;
         }
-
-        boardsContainer.innerHTML = ''; // Clear previous boards
-        boardsContainer.appendChild(boardElement);
     }
 
     function checkBoard(board) {
@@ -266,32 +420,6 @@
         return false;
     }
 
-    function renderBingoBoard(board, index) {
-        const boardElement = document.createElement('div');
-        boardElement.classList.add('bingo-board');
-        boardElement.innerHTML = `
-            <div class="board-title">Board ${index + 1}</div>
-            <div class="header header-b">B</div>
-            <div class="header header-i">I</div>
-            <div class="header header-n">N</div>
-            <div class="header header-g">G</div>
-            <div class="header header-o">O</div>
-        `;
-        board.forEach((row, rowIndex) => {
-            row.forEach((cell, cellIndex) => {
-                const cellElement = document.createElement('div');
-                cellElement.textContent = cell === 'CALLED' ? cell.replace('CALLED', '') : cell;
-                if (cell === 'FREE') {
-                    cellElement.classList.add('free');
-                } else if (calledNumbers.has(cell.toString()) || cell === 'CALLED') {
-                    cellElement.classList.add('called-cell');
-                }
-                boardElement.appendChild(cellElement);
-            });
-        });
-        return boardElement;
-    }
-
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
         const betAmount = localStorage.getItem('bet_amount');
@@ -303,23 +431,6 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-
-        if (selectedIndices && selectedIndices.length > 0) {
-            selectedIndices.forEach(index => {
-                const board = boards[index];
-                const boardElement = renderBingoBoard(board, index);
-                boardsContainer.appendChild(boardElement);
-            });
-        } else {
-            boardsContainer.innerHTML = '<p class="text-center">No boards selected.</p>';
-        }
-
-        displayTotalBetAmount();
-    });
-
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
         paused = !paused;
@@ -328,7 +439,35 @@
     checkWinnerButton.addEventListener('click', checkWinner);
 
     initializeBoard();
+    displayTotalBetAmount();
 });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const boards = JSON.parse(localStorage.getItem('bingo_boards'));
+                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+
+                if (selectedIndices && selectedIndices.length > 0) {
+                    selectedIndices.forEach(index => {
+                        const board = boards[index];
+                        const boardElement = renderBingoBoard(board, index);
+                        boardsContainer.appendChild(boardElement);
+                    });
+                } else {
+                    boardsContainer.innerHTML = '<p class="text-center">No boards selected.</p>';
+                }
+
+                displayTotalBetAmount();
+            });
+
+            callNumberButton.addEventListener('click', startCallingNumbers);
+            playPauseButton.addEventListener('click', () => {
+                paused = !paused;
+                playPauseButton.textContent = paused ? 'Resume' : 'Pause';
+            });
+            checkWinnerButton.addEventListener('click', checkWinner);
+
+            initializeBoard();
+        });
 
 
     </script>
