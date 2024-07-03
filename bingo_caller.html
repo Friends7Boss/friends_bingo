@@ -78,7 +78,7 @@
 
     <!-- Modal for displaying winner result -->
     <div class="modal fade" id="winnerModal" tabindex="-1" role="dialog" aria-labelledby="winnerModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="winnerModalLabel">Winner Result</h5>
@@ -192,6 +192,7 @@
 
                 const boards = JSON.parse(localStorage.getItem('bingo_boards'));
                 const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+                const calledNumbersSet = new Set(JSON.parse(localStorage.getItem('called_numbers')));
 
                 if (!boards || boardNumber > boards.length) {
                     showModal('Board number not found.');
@@ -205,8 +206,7 @@
 
                 const board = boards[boardNumber - 1];
                 const hasWon = checkBoard(board);
-                showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`);
-                markCalledNumbers(board);
+                showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet);
             }
 
             function checkBoard(board) {
@@ -242,21 +242,50 @@
                 return false;
             }
 
-            function showModal(message) {
+            function showModal(message, board = null, calledNumbersSet = null) {
                 winnerModalBody.innerHTML = `<p>${message}</p>`;
+                if (board) {
+                    const boardElement = renderBingoBoard(board, calledNumbersSet);
+                    winnerModalBody.appendChild(boardElement);
+                }
                 $('#winnerModal').modal('show');
             }
 
-            function markCalledNumbers(board) {
-                for (let r = 0; r < board.length; r++) {
-                    for (let c = 0; c < board[r].length; c++) {
-                        const cellValue = board[r][c];
-                        const cellElement = document.querySelector(`[data-number="${'BINGO'[c]}${cellValue}"]`);
-                        if (cellElement && calledNumbers.has(`${'BINGO'[c]}${cellValue}`)) {
-                            cellElement.classList.add('marked');
+            function renderBingoBoard(board, calledNumbersSet) {
+                const boardContainer = document.createElement('div');
+                boardContainer.classList.add('bingo-board', 'shadow-sm', 'rounded', 'mb-4');
+
+                const headers = ['B', 'I', 'N', 'G', 'O'];
+                const headerClasses = ['header-b', 'header-i', 'header-n', 'header-g', 'header-o'];
+                headers.forEach((header, index) => {
+                    const headerCell = document.createElement('div');
+                    headerCell.textContent = header;
+                    headerCell.classList.add('header', headerClasses[index]);
+                    boardContainer.appendChild(headerCell);
+                });
+
+                for (let i = 0; i < 5; i++) {
+                    for (let j = 0; j < 5; j++) {
+                        const cellElement = document.createElement('div');
+                        cellElement.textContent = board[i][j];
+                        const cellValue = board[i][j];
+
+                        if (cellValue === 'FREE') {
+                            cellElement.classList.add('free');
+                        } else {
+                            const cellId = `${headers[j]}${cellValue}`;
+                            if (calledNumbersSet.has(cellId)) {
+                                cellElement.classList.add('called');
+                            }
+                            cellElement.addEventListener('click', () => {
+                                cellElement.classList.toggle('marked');
+                            });
                         }
+                        boardContainer.appendChild(cellElement);
                     }
                 }
+
+                return boardContainer;
             }
 
             function displayTotalBetAmount() {
