@@ -70,9 +70,7 @@
         .custom-select-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-            gap: 3px;
-            align-container: left;
-            justify-content: left;
+            gap: 3px; 
         }
         .custom-select-container label {
             display: flex;
@@ -94,6 +92,16 @@
         }
         .hide {
             display: none;
+        }
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .form-group, .text-center {
+            width: 100%;
+            max-width: 300px;
+        
         }
     </style>
 </head>
