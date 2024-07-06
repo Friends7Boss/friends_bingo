@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" lang="amh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingo Caller</title>
+    <title></title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body { position: relative; min-height: 100vh; }
+        .left-down-corner { position: absolute; bottom: 20px; left: 20px; }
+        .center-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
         .called-number { font-size: 2rem; margin-top: 20px; font-weight: bold; }
-        .numbers-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; color: #fff; }
+        .numbers-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 400px; color: #fff; }
         .row { display: flex; align-items: center; margin-bottom: 10px; }
-        .row h2 { width: 30px; margin-right: 10px; font-size: 2rem; background-color: darkslateblue; color: #f8f9fa; }
-        .number { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border: 2px solid #000; border-radius: 5px; font-weight: bold; margin-right: 5px; background-color: rgb(3, 25, 65); }
-        .called { background-color: rgb(21, 153, 230); }
-        .called-numbers-container { display: flex; flex-direction: row; flex-wrap: wrap; margin-top: 20px; }
-        .called-number-item { margin-right: 10px; font-size: 1.5rem; }
+        .row h2 { width: 50px; margin-right: 50px; font-family: 'Times New Roman', Times; font-size: 2rem; border: 5px outset rgb(255, 123, 15); border-radius: 5px; background-color: rgb(41, 3, 253); color: #f8f9fa; margin-left: 200px; }
+        .number { width: 50px; height: 50px; display: flex; font-family: 'Times New Roman', Times, serif; font-size: 1.5rem; align-items: center; justify-content: center; border: 5px inset #f5a906; border-radius: 5px; font-weight: bold;   margin-right: 5px; background-color: rgb(8, 27, 63); }
+        .called { background-color: rgb(255, 210, 10); color: rgb(14, 10, 66)}
+        .highlight { background-color: rgb(255, 165, 0); }
         .bingo-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; margin-bottom: 20px; border: 2px solid blue; padding: 10px; background-color: #f8f9fa; }
         .bingo-board div { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid blue; background-color: #fff; }
         .bingo-board .header { font-weight: bold; }
@@ -24,54 +26,88 @@
         .bingo-board .header-o { background-color: #0000ff; color: white; }
         .bingo-board .free { background-color: aqua; color: white; }
         .board-title { grid-column: span 5; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .called-numbers-container { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+        .called-number-item { margin: 5px; font-size: 1.5rem; }
         .winner { border: 2px solid green; }
         .result { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
-        .total-bet-amount { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
+        .total-bet-amount { margin-bottom: 70px; font-size: 1.5rem; font-weight: bold; margin-left: 1000px; }
         .called-cell { background-color: lightgreen; }
-        .marked { background-color: yellow; }
+        .marked { background-color: yellow; color: red; }
+        .countdown { font-size: 3rem; font-weight: bold; color: darkslateblue; margin-bottom: 50px; margin-right: 1200px;}
+        .total-calls { font-size: 2rem; font-weight: bold; color: darkslateblue; margin-top: 50px; margin-right: 1000px; }
+        .ball { 
+            width: 100px; 
+            height: 100px; 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.5rem; 
+            animation: bounce 2s infinite; 
+            margin-top: 20px;
+            
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0); 
+            } 
+            40% {
+                transform: translateY(-150px); 
+            } 
+            60% { 
+                transform: translateY(-75px); 
+            } 
+        }
     </style>
 </head>
 <body class="bg-light">
     <div class="container text-center">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="my-4">Bingo Caller</h1>
-                <div class="form-group">
-                    <label for="interval-select">Select Time Interval:</label>
-                    <select id="interval-select" class="form-control w-25 mx-auto">
-                        <option value="5">5 seconds</option>
-                        <option value="3">3 seconds</option>
-                    </select>
+        <div class="center-container">
+            <div class="row">
+                <div class="col-12">
+                    
+                    <div id="countdown" class="countdown"></div>
+                    <div id="total-calls" class="total-calls">Total Calls: 0</div>
+                    <div id="called-number" class="called-number"></div>
+                    <div id="numbers-container" class="numbers-container">
+                        <div class="row" id="row-B">
+                            <h2>B</h2>
+                        </div>
+                        <div class="row" id="row-I">
+                            <h2>I</h2>
+                        </div>
+                        <div class="row" id="row-N">
+                            <h2>N</h2>
+                        </div>
+                        <div class="row" id="row-G">
+                            <h2>G</h2>
+                        </div>
+                        <div class="row" id="row-O">
+                            <h2>O</h2>
+                        </div>
+                    </div>
+                    <div id="called-numbers-container" class="called-numbers-container"></div>
+                    <div id="boards-container"></div>
+                    <div id="result" class="result"></div>
+                    <div id="total-bet-amount" class="total-bet-amount"></div>
                 </div>
-                <button id="call-number-button" class="btn btn-primary">Start Calling Numbers</button>
-                <button id="play-pause-button" class="btn btn-secondary">Pause</button>
-                <div class="form-group mt-4">
-                    <input type="number" id="board-number-input" class="form-control w-25 mx-auto" placeholder="Enter Board Number">
-                    <button id="check-winner-button" class="btn btn-success mt-2">Check Winner</button>
-                </div>
-                <div id="countdown" class="called-number"></div>
-                <div id="called-number" class="called-number"></div>
-                <div id="called-numbers-container" class="called-numbers-container"></div>
-                <div id="numbers-container" class="numbers-container">
-                    <div class="row" id="row-B">
-                        <h2>B</h2>
-                    </div>
-                    <div class="row" id="row-I">
-                        <h2>I</h2>
-                    </div>
-                    <div class="row" id="row-N">
-                        <h2>N</h2>
-                    </div>
-                    <div class="row" id="row-G">
-                        <h2>G</h2>
-                    </div>
-                    <div class="row" id="row-O">
-                        <h2>O</h2>
-                    </div>
-                </div>
-                <div id="boards-container"></div>
-                <div id="result" class="result"></div>
-                <div id="total-bet-amount" class="total-bet-amount"></div>
+            </div>
+        </div>
+        <div class="left-down-corner">
+            <div class="form-group">
+                <label for="interval-select">Select Time:</label>
+                <select id="interval-select" class="form-control w-50 mx-auto">
+                    <option value="5">5 seconds</option>
+                    <option value="3">3 seconds</option>
+                </select>
+            </div>
+            <button id="call-number-button" class="btn btn-primary">Start Calling</button>
+            <button id="play-pause-button" class="btn btn-secondary">Pause</button>
+            <button id="end-game-button" class="btn btn-danger mt-2">End Game</button>
+            <div class="form-group mt-4">
+                <input type="number" id="board-number-input" class="form-control w-50 mx-auto" placeholder="Enter Board Number">
+                <button id="check-winner-button" class="btn btn-success mt-2">Check</button>
             </div>
         </div>
     </div>
@@ -99,9 +135,13 @@
             const intervalSelect = document.getElementById('interval-select');
             const callNumberButton = document.getElementById('call-number-button');
             const playPauseButton = document.getElementById('play-pause-button');
+            const endGameButton = document.getElementById('end-game-button');
             const checkWinnerButton = document.getElementById('check-winner-button');
             const calledNumberElement = document.getElementById('called-number');
             const calledNumbersContainer = document.getElementById('called-numbers-container');
+            const totalBetAmountElement = document.getElementById('total-bet-amount');
+            const countdownElement = document.getElementById('countdown');
+            const totalCallsElement = document.getElementById('total-calls');
             const winnerModalBody = document.getElementById('winner-modal-body');
             const rows = {
                 B: document.getElementById('row-B'),
@@ -122,6 +162,33 @@
             const calledNumbers = new Set();
             let intervalId = null;
             let paused = false;
+            let totalCalls = 0;
+            let countdownValue = 0;
+
+            const ballColors = {
+                B: '#ff0000',
+                I: '#ffa500',
+                N: '#ffff00',
+                G: '#008000',
+                O: '#0000ff'
+            };
+
+            const ttsUrls = {
+                B: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ቢ&tl=am&client=tw-ob',
+                I: 'https://translate.google.com/translate_tts?ie=UTF-8&q=አይ&tl=am&client=tw-ob',
+                N: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ኤን&tl=am&client=tw-ob',
+                G: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ጂ&tl=am&client=tw-ob',
+                O: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ኦ&tl=am&client=tw-ob'
+            };
+
+            function playTTS(letter, number) {
+                const audioLetter = new Audio(ttsUrls[letter]);
+                audioLetter.play();
+                audioLetter.addEventListener('ended', () => {
+                    const audioNumber = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${number}&tl=am&client=tw-ob`);
+                    audioNumber.play();
+                });
+            }
 
             function initializeBoard() {
                 for (const [letter, nums] of Object.entries(numbers)) {
@@ -154,6 +221,7 @@
                 const number = getRandomNumber();
                 if (!number) return;
                 calledNumbers.add(number);
+                totalCalls += 1;
 
                 // Save the called numbers to localStorage
                 localStorage.setItem('called_numbers', JSON.stringify(Array.from(calledNumbers)));
@@ -164,11 +232,66 @@
                 );
                 numberElement.classList.add('called');
 
-                calledNumberElement.textContent = number;
+                calledNumberElement.innerHTML = `<div class="ball" style="background-color: ${ballColors[letter]}">${letter}${num}</div>`;
                 const calledNumberItem = document.createElement('div');
                 calledNumberItem.classList.add('called-number-item');
                 calledNumberItem.textContent = number;
+                calledNumberItem.style.backgroundColor = ballColors[letter];
+                calledNumberItem.style.color = '#fff';
                 calledNumbersContainer.appendChild(calledNumberItem);
+                
+                // Show only the 4 most recently called numbers
+                if (calledNumbersContainer.children.length >= 4) {
+                    calledNumbersContainer.removeChild(calledNumbersContainer.firstChild);
+                }
+                calledNumbersContainer.appendChild(calledNumberItem);
+
+                totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
+                startCountdown();
+                playTTS(letter, num);  // Play the TTS audio for the called letter and number
+            }
+
+            function startCountdown() {
+                countdownValue = parseInt(intervalSelect.value);
+                countdownElement.textContent = countdownValue;
+
+                const countdownInterval = setInterval(() => {
+                    if (countdownValue > 1) {
+                        countdownValue -= 1;
+                        countdownElement.textContent = countdownValue;
+                    } else {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+            }
+
+            function endGame() {
+                // Clear localStorage
+                localStorage.removeItem('called_numbers');
+                localStorage.removeItem('bingo_boards');
+                localStorage.removeItem('selected_boards');
+                localStorage.removeItem('bet_amount');
+
+                // Reset the game state
+                calledNumbers.clear();
+                calledNumberElement.textContent = '';
+                calledNumbersContainer.innerHTML = '';
+                totalCalls = 0;
+                totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
+                countdownElement.textContent = '';
+
+                // Reset board UI
+                Object.keys(rows).forEach(letter => {
+                    while (rows[letter].firstChild) {
+                        rows[letter].removeChild(rows[letter].firstChild);
+                    }
+                });
+
+                // Reinitialize the board
+                initializeBoard();
+
+                // Redirect to select_board.html
+                window.location.href = 'index.html';
             }
 
             function startCallingNumbers() {
@@ -275,11 +398,8 @@
                         } else {
                             const cellId = `${headers[j]}${cellValue}`;
                             if (calledNumbersSet.has(cellId)) {
-                                cellElement.classList.add('called');
+                                cellElement.classList.add('called-cell'); // Use the appropriate class to mark called numbers
                             }
-                            cellElement.addEventListener('click', () => {
-                                cellElement.classList.toggle('marked');
-                            });
                         }
                         boardContainer.appendChild(cellElement);
                     }
@@ -305,6 +425,7 @@
                 paused = !paused;
                 playPauseButton.textContent = paused ? 'Resume' : 'Pause';
             });
+            endGameButton.addEventListener('click', endGame);
             checkWinnerButton.addEventListener('click', checkWinner);
 
             initializeBoard();
