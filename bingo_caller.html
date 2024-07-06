@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Bingo Caller</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { position: relative; min-height: 100vh; }
@@ -13,8 +13,8 @@
         .numbers-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 400px; color: #fff; }
         .row { display: flex; align-items: center; margin-bottom: 10px; }
         .row h2 { width: 50px; margin-right: 50px; font-family: 'Times New Roman', Times; font-size: 2rem; border: 5px outset rgb(255, 123, 15); border-radius: 5px; background-color: rgb(41, 3, 253); color: #f8f9fa; margin-left: 200px; }
-        .number { width: 50px; height: 50px; display: flex; font-family: 'Times New Roman', Times, serif; font-size: 1.5rem; align-items: center; justify-content: center; border: 5px inset #f5a906; border-radius: 5px; font-weight: bold;   margin-right: 5px; background-color: rgb(8, 27, 63); }
-        .called { background-color: rgb(255, 210, 10); color: rgb(14, 10, 66)}
+        .number { width: 50px; height: 50px; display: flex; font-family: 'Times New Roman', Times, serif; font-size: 1.5rem; align-items: center; justify-content: center; border: 5px inset #f5a906; border-radius: 5px; font-weight: bold; margin-right: 5px; background-color: rgb(8, 27, 63); }
+        .called { background-color: rgb(255, 210, 10); color: rgb(14, 10, 66) }
         .highlight { background-color: rgb(255, 165, 0); }
         .bingo-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; margin-bottom: 20px; border: 2px solid blue; padding: 10px; background-color: #f8f9fa; }
         .bingo-board div { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid blue; background-color: #fff; }
@@ -33,7 +33,7 @@
         .total-bet-amount { margin-bottom: 70px; font-size: 1.5rem; font-weight: bold; margin-left: 1000px; }
         .called-cell { background-color: lightgreen; }
         .marked { background-color: yellow; color: red; }
-        .countdown { font-size: 3rem; font-weight: bold; color: darkslateblue; margin-bottom: 50px; margin-right: 1200px;}
+        .countdown { font-size: 3rem; font-weight: bold; color: darkslateblue; margin-bottom: 50px; margin-right: 1200px; }
         .total-calls { font-size: 2rem; font-weight: bold; color: darkslateblue; margin-top: 50px; margin-right: 1000px; }
         .ball { 
             width: 100px; 
@@ -46,7 +46,6 @@
             font-size: 1.5rem; 
             animation: bounce 2s infinite; 
             margin-top: 20px;
-            
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {
@@ -57,7 +56,7 @@
             } 
             60% { 
                 transform: translateY(-75px); 
-            } 
+            }  
         }
     </style>
 </head>
@@ -66,7 +65,6 @@
         <div class="center-container">
             <div class="row">
                 <div class="col-12">
-                    
                     <div id="countdown" class="countdown"></div>
                     <div id="total-calls" class="total-calls">Total Calls: 0</div>
                     <div id="called-number" class="called-number"></div>
@@ -183,10 +181,10 @@
 
             function playTTS(letter, number) {
                 const audioLetter = new Audio(ttsUrls[letter]);
-                audioLetter.play();
+                audioLetter.play().catch(error => console.error('Error playing letter TTS:', error));
                 audioLetter.addEventListener('ended', () => {
                     const audioNumber = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${number}&tl=am&client=tw-ob`);
-                    audioNumber.play();
+                    audioNumber.play().catch(error => console.error('Error playing number TTS:', error));
                 });
             }
 
@@ -238,8 +236,7 @@
                 calledNumberItem.textContent = number;
                 calledNumberItem.style.backgroundColor = ballColors[letter];
                 calledNumberItem.style.color = '#fff';
-                calledNumbersContainer.appendChild(calledNumberItem);
-                
+
                 // Show only the 4 most recently called numbers
                 if (calledNumbersContainer.children.length >= 4) {
                     calledNumbersContainer.removeChild(calledNumbersContainer.firstChild);
