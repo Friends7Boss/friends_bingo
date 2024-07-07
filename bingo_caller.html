@@ -3,71 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingo Caller</title>
+    <title>Bingo Game</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { position: relative; min-height: 100vh; }
-        .left-down-corner { position: absolute; bottom: 20px; left: 20px; }
-        .center-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
-        .called-number { font-size: 2rem; margin-top: 20px; font-weight: bold; }
-        .numbers-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 400px; color: #fff; }
+        body { 
+            position: relative; 
+            min-height: 100vh; 
+            padding: 20px; 
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+        }
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(26, 25, 25); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+        }
+        .left-down-corner { position: absolute; bottom: 570px; left: 20px; }
+        .center-container { display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
+        .called-number { font-size: 2rem; margin-top: 20px; font-weight: bolder; }
+        .numbers-container { display: flex; flex-direction: column; align-items: center; top: -100px; left: 50px; margin-bottom: 550px; color: #fff; position: relative; }
         .row { display: flex; align-items: center; margin-bottom: 10px; }
-        .row h2 { width: 50px; margin-right: 50px; font-family: 'Times New Roman', Times; font-size: 2rem; border: 5px outset rgb(255, 123, 15); border-radius: 5px; background-color: rgb(41, 3, 253); color: #f8f9fa; margin-left: 200px; }
-        .number { width: 50px; height: 50px; display: flex; font-family: 'Times New Roman', Times, serif; font-size: 1.5rem; align-items: center; justify-content: center; border: 5px inset #f5a906; border-radius: 5px; font-weight: bold; margin-right: 5px; background-color: rgb(8, 27, 63); }
+        .row h2 { width: 60px; height: 60px; margin-right: 50px;right: -50px; font-family: 'Times New Roman', Times; font-size: 4rem; border: 4px outset rgb(255, 123, 15); border-radius: 5px; background-color: rgb(41, 3, 253); color: #f8f9fa; margin-left: 200px; }
+        .number { width: 50px; height: 50px; display: flex; font-family: 'Times New Roman', Times, serif; font-size: 40px; align-items: center; justify-content: center; border: 1px inset #f5a906; border-radius: 5px; font-weight: bolder; margin-right: 5px; background-color: rgb(8, 27, 63); }
         .called { background-color: rgb(255, 210, 10); color: rgb(14, 10, 66) }
         .highlight { background-color: rgb(255, 165, 0); }
-        .bingo-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; margin-bottom: 20px; border: 2px solid blue; padding: 10px; background-color: #f8f9fa; }
-        .bingo-board div { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid blue; background-color: #fff; }
-        .bingo-board .header { font-weight: bold; }
+        .bingo-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; width: 100%; margin-bottom: 20px; border: 2px solid blue; padding: 10px; background-color: #f8f9fa; }
+        .bingo-board div { display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border: 3px solid blue; }
+        .bingo-board .header { font-size: xx-large;font-weight: bolder; }
         .bingo-board .header-b { background-color: red; color: white; }
-        .bingo-board .header-i { background-color: #ffa500; color: white; }
+        .bingo-board .header-i { background-color: #df9816; color: white; }
         .bingo-board .header-n { background-color: #ffff00; color: black; }
         .bingo-board .header-g { background-color: #008000; color: white; }
         .bingo-board .header-o { background-color: #0000ff; color: white; }
         .bingo-board .free { background-color: aqua; color: white; }
         .board-title { grid-column: span 5; text-align: center; font-weight: bold; margin-bottom: 10px; }
-        .called-numbers-container { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
-        .called-number-item { margin: 5px; font-size: 1.5rem; }
+        .called-numbers-container { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; position: absolute; margin-top: 330px; margin-left: 280px; }
+        .called-number-item { margin: 5px; font-size: 4rem; width: 140px; height: 140px; color: rgb(7, 4, 4); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; background-color: white; border: 5px solid; }
+        .called-number-item span { display: block; }
+        .called-number-item.b { border-color: red; background-color: #ffcccc; }
+        .called-number-item.i { border-color: orange; background-color: #ffddcc; }
+        .called-number-item.n { border-color: yellow; background-color: #ffffcc; }
+        .called-number-item.g { border-color: green; background-color: #ccffcc; }
+        .called-number-item.o { border-color: blue; background-color: #ccccff; }
         .winner { border: 2px solid green; }
-        .result { margin-top: 20px; font-size: 1.5rem; font-weight: bold; }
-        .total-bet-amount { margin-bottom: 70px; font-size: 1.5rem; font-weight: bold; margin-left: 1000px; }
-        .called-cell { background-color: lightgreen; }
+        .result { margin-top: 20px; font-size: xx-large; font-weight: bold;  }
+        .total-bet-amount { position: absolute; top: 400px; right: 20px; font-size: 2.5rem; font-weight: bold; color: chartreuse; background-color: rgb(85, 87, 87); border: #ffff00; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; }
+        .called-cell { background-color:yellow; font-size: large; font-weight: bold; }
         .marked { background-color: yellow; color: red; }
-        .countdown { font-size: 3rem; font-weight: bold; color: darkslateblue; margin-bottom: 50px; margin-right: 1200px; }
-        .total-calls { font-size: 2rem; font-weight: bold; color: darkslateblue; margin-top: 50px; margin-right: 1000px; }
-        .ball { 
-            width: 100px; 
-            height: 100px; 
-            color: white; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.5rem; 
-            animation: bounce 2s infinite; 
-            margin-top: 20px;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0); 
-            } 
-            40% {
-                transform: translateY(-150px); 
-            } 
-            60% { 
-                transform: translateY(-75px); 
-            }  
-        }
+        .countdown { font-size: 3rem; font-weight: bold; color: rgb(245, 241, 41); margin-bottom: 10px; }
+        .total-calls { font-size: 2rem; font-weight: bold; color: rgb(245, 241, 41); margin-top: 10px; margin-right: 1000px; }
+        .ball { width: 180px; height: 180px; bottom: 10px; left: 80px; color: rgb(7, 4, 4); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 6rem; font-weight: bold; animation: pop-up 0.5s ease-out; position: absolute; top:450px; background-color: white; border: 10px solid; }
+        .ball span { display: block; }
+        .ball.b { border-color: red; }
+        .ball.i { border-color: orange; }
+        .ball.n { border-color: yellow; }
+        .ball.g { border-color: green; }
+        .ball.o { border-color: blue; }
+        @keyframes pop-up { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .btn-info { background-color: rgb(173, 98, 98);}
     </style>
 </head>
 <body class="bg-light">
+    <div class="background-image"></div>
     <div class="container text-center">
         <div class="center-container">
             <div class="row">
                 <div class="col-12">
-                    <div id="countdown" class="countdown"></div>
+                    <div id="total-bet-amount" class="total-bet-amount">ደራሽ: 0</div>
                     <div id="total-calls" class="total-calls">Total Calls: 0</div>
                     <div id="called-number" class="called-number"></div>
+                    <div id="called-numbers-container" class="called-numbers-container"></div>
                     <div id="numbers-container" class="numbers-container">
                         <div class="row" id="row-B">
                             <h2>B</h2>
@@ -85,20 +94,20 @@
                             <h2>O</h2>
                         </div>
                     </div>
-                    <div id="called-numbers-container" class="called-numbers-container"></div>
                     <div id="boards-container"></div>
                     <div id="result" class="result"></div>
-                    <div id="total-bet-amount" class="total-bet-amount"></div>
                 </div>
             </div>
         </div>
         <div class="left-down-corner">
             <div class="form-group">
+                <div id="countdown" class="countdown"></div>
                 <label for="interval-select">Select Time:</label>
                 <select id="interval-select" class="form-control w-50 mx-auto">
                     <option value="5">5 seconds</option>
                     <option value="3">3 seconds</option>
                 </select>
+                <button id="history-button" class="btn btn-info mt-3">View History</button>
             </div>
             <button id="call-number-button" class="btn btn-primary">Start Calling</button>
             <button id="play-pause-button" class="btn btn-secondary">Pause</button>
@@ -109,7 +118,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Modal for displaying winner result -->
     <div class="modal fade" id="winnerModal" tabindex="-1" role="dialog" aria-labelledby="winnerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -127,7 +136,9 @@
             </div>
         </div>
     </div>
-
+    <!-- Audio files for popup sounds -->
+    <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
+    <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const intervalSelect = document.getElementById('interval-select');
@@ -164,11 +175,11 @@
             let countdownValue = 0;
 
             const ballColors = {
-                B: '#ff0000',
-                I: '#ffa500',
-                N: '#ffff00',
-                G: '#008000',
-                O: '#0000ff'
+                B: 'red',
+                I: 'orange',
+                N: 'yellow',
+                G: 'green',
+                O: 'blue'
             };
 
             const ttsUrls = {
@@ -181,10 +192,10 @@
 
             function playTTS(letter, number) {
                 const audioLetter = new Audio(ttsUrls[letter]);
-                audioLetter.play().catch(error => console.error('Error playing letter TTS:', error));
+                audioLetter.play();
                 audioLetter.addEventListener('ended', () => {
                     const audioNumber = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${number}&tl=am&client=tw-ob`);
-                    audioNumber.play().catch(error => console.error('Error playing number TTS:', error));
+                    audioNumber.play();
                 });
             }
 
@@ -230,12 +241,10 @@
                 );
                 numberElement.classList.add('called');
 
-                calledNumberElement.innerHTML = `<div class="ball" style="background-color: ${ballColors[letter]}">${letter}${num}</div>`;
+                calledNumberElement.innerHTML = `<div class="ball ${letter.toLowerCase()}" style="background-color: ${ballColors[letter]}"><span>${letter}</span><span>${num}</span></div>`;
                 const calledNumberItem = document.createElement('div');
-                calledNumberItem.classList.add('called-number-item');
-                calledNumberItem.textContent = number;
-                calledNumberItem.style.backgroundColor = ballColors[letter];
-                calledNumberItem.style.color = '#fff';
+                calledNumberItem.classList.add('called-number-item', letter.toLowerCase());
+                calledNumberItem.innerHTML = `<span>${letter}</span><span>${num}</span>`;
 
                 // Show only the 4 most recently called numbers
                 if (calledNumbersContainer.children.length >= 4) {
@@ -263,6 +272,9 @@
             }
 
             function endGame() {
+                // Record the bet amount at the end of the game
+                recordBetAmount();
+
                 // Clear localStorage
                 localStorage.removeItem('called_numbers');
                 localStorage.removeItem('bingo_boards');
@@ -327,6 +339,7 @@
                 const board = boards[boardNumber - 1];
                 const hasWon = checkBoard(board);
                 showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet);
+                playPopupSound(hasWon);
             }
 
             function checkBoard(board) {
@@ -405,15 +418,45 @@
                 return boardContainer;
             }
 
+            document.getElementById('history-button').addEventListener('click', function() {
+                window.location.href = 'history.html';
+            });
+
+            function recordBetAmount() {
+                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+                const betAmount = localStorage.getItem('bet_amount');
+                const currentDate = new Date().toLocaleString();
+
+                if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+                    const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+                    const reducedBetAmount = totalBetAmount * 0.8; // 20% less
+
+                    let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
+                    betHistory.push({ amount: reducedBetAmount.toFixed(2), date: currentDate });
+                    localStorage.setItem('bet_history', JSON.stringify(betHistory));
+                }
+            }
+
             function displayTotalBetAmount() {
                 const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
                 const betAmount = localStorage.getItem('bet_amount');
                 if (selectedIndices && selectedIndices.length > 0 && betAmount) {
                     const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
                     const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
-                    totalBetAmountElement.textContent = `Total Bet Amount: $${reducedBetAmount.toFixed(2)}`;
+                    totalBetAmountElement.textContent = `ደራሽ: ${reducedBetAmount.toFixed(2)}`;
                 } else {
-                    totalBetAmountElement.textContent = 'Total Bet Amount: $0';
+                    totalBetAmountElement.textContent = 'ደራሽ: 0';
+                }
+            }
+
+            function playPopupSound(isClear) {
+                const clearSound = document.getElementById('clear-result-sound');
+                const unclearSound = document.getElementById('unclear-result-sound');
+                console.log('Playing sound:', isClear ? 'clear' : 'unclear');
+                if (isClear) {
+                    clearSound.play().catch(e => console.log('Failed to play clear sound:', e));
+                } else {
+                    unclearSound.play().catch(e => console.log('Failed to play unclear sound:', e));
                 }
             }
 

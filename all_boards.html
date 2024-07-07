@@ -9,8 +9,8 @@
         .bingo-board {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            width: 100%;
+            gap: 3px;
+            width: 50%;
             margin-bottom: 20px;
             border: 2px solid blue;
             padding: 10px;
@@ -20,10 +20,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border: 1px solid blue;
+            width: 80px;
+            height: 80px;
+            border: 3px solid blue;
             background-color: #fff;
+            font-weight: bolder;
+            font-size: xx-large;
         }
         .bingo-board .header {
             font-weight: bold;
@@ -55,7 +57,7 @@
         .board-title {
             grid-column: span 5;
             text-align: center;
-            font-weight: bold;
+            
             margin-bottom: 10px;
         }
     </style>
@@ -68,28 +70,43 @@
             <a href="index.html" class="btn btn-secondary">Go back to Board Selection</a>
         </div>
     </div>
-
-    <script src="bingo.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const boardsContainer = document.getElementById('boards-container');
-            let boards = JSON.parse(localStorage.getItem('bingo_boards')) || [];
 
-            if (boards.length === 0) {
-                for (let i = 0; i < 100; i++) {
-                    boards.push(generateBingoBoard());
-                }
-                localStorage.setItem('bingo_boards', JSON.stringify(boards));
-            }
+            // Generate and use the same boards every time
+            const boards = generateUniqueBingoBoards();
 
+            // Display the boards
             boards.forEach((board, index) => {
                 const boardElement = renderBingoBoard(board, index);
                 boardsContainer.appendChild(boardElement);
             });
         });
 
-        function generateBingoBoard() {
-            const board = [];
+        function seedRandom(seed) {
+            let m = 0x80000000;
+            let a = 1103515245;
+            let c = 12345;
+            let state = seed ? seed : Math.floor(Math.random() * (m - 1));
+
+            return function() {
+                state = (a * state + c) % m;
+                return state / (m - 1);
+            };
+        }
+
+        function shuffle(array, randomFunc) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(randomFunc() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function generateUniqueBingoBoards() {
+            const randomFunc = seedRandom(12345);
+            const boards = [];
             const ranges = [
                 Array.from({ length: 15 }, (_, i) => i + 1),
                 Array.from({ length: 15 }, (_, i) => i + 16),
@@ -98,21 +115,26 @@
                 Array.from({ length: 15 }, (_, i) => i + 61)
             ];
 
-            ranges.forEach(range => shuffle(range));
+            for (let i = 0; i < 100; i++) {
+                const board = [];
+                const boardRanges = ranges.map(range => [...range]);
+                boardRanges.forEach(range => shuffle(range, randomFunc));
 
-            for (let i = 0; i < 5; i++) {
-                const row = [];
-                for (let j = 0; j < 5; j++) {
-                    if (i === 2 && j === 2) {
-                        row.push('FREE');
-                    } else {
-                        row.push(ranges[j][i]);
+                for (let row = 0; row < 5; row++) {
+                    const currentRow = [];
+                    for (let col = 0; col < 5; col++) {
+                        if (row === 2 && col === 2) {
+                            currentRow.push('FREE');
+                        } else {
+                            currentRow.push(boardRanges[col][row]);
+                        }
                     }
+                    board.push(currentRow);
                 }
-                board.push(row);
+                boards.push(board);
             }
 
-            return board;
+            return boards;
         }
 
         function renderBingoBoard(board, index) {
@@ -146,13 +168,6 @@
             }
 
             return boardContainer;
-        }
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
         }
     </script>
 </body>

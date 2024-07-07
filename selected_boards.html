@@ -10,7 +10,7 @@
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 5px;
-            width: 100%;
+            width: 50%;
             margin-bottom: 20px;
             border: 2px solid blue;
             padding: 10px;
@@ -20,14 +20,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border: 1px solid blue;
-        
+            width: 70px;
+            height: 70px;
+            border: 3px solid blue;
+            font-size: xx-large;
+            font-weight: bolder;
             cursor: pointer;
         }
         .bingo-board .header {
-            font-weight: bold;
+            font-weight: bolder;
+            font-size: xx-large;
         }
         .bingo-board .header-b {
             background-color: red;
@@ -50,8 +52,8 @@
             color: white;
         }
         .bingo-board .free {
-            background-color: aqua;
-            color: white;
+            background-color: yellow;
+            color: black;
         }
         .board-title {
             grid-column: span 5;
@@ -65,7 +67,7 @@
             font-size: bold;
         }
         .called {
-            background-color: lightgreen;
+            background-color: yellow;
             color: blue;
         }
         .bingo-board div:hover {
