@@ -134,7 +134,7 @@
             const calledNumbers = new Set(JSON.parse(localStorage.getItem('called_numbers')));
 
             if (selectedIndices && selectedIndices.length > 0) {
-                selectedIndices.forEach(selectedIndex => {
+                selectedIndices.forEach(selectedIndex => {  
                     const board = boards[selectedIndex];
                     const boardElement = renderBingoBoard(board, selectedIndex, calledNumbers);
                     boardsContainer.appendChild(boardElement);
