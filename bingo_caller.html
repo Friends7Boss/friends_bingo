@@ -150,183 +150,183 @@
     <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
     <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const intervalSelect = document.getElementById('interval-select');
-            const callNumberButton = document.getElementById('call-number-button');
-            const playPauseButton = document.getElementById('play-pause-button');
-            const endGameButton = document.getElementById('end-game-button');
-            const checkWinnerButton = document.getElementById('check-winner-button');
-            const calledNumberElement = document.getElementById('called-number');
-            const calledNumbersContainer = document.getElementById('called-numbers-container');
-            const totalBetAmountElement = document.getElementById('total-bet-amount');
-            const countdownElement = document.getElementById('countdown');
-            const totalCallsElement = document.getElementById('total-calls');
-            const winnerModalBody = document.getElementById('winner-modal-body');
-            const rows = {
-                B: document.getElementById('row-B'),
-                I: document.getElementById('row-I'),
-                N: document.getElementById('row-N'),
-                G: document.getElementById('row-G'),
-                O: document.getElementById('row-O')
-            };
+    document.addEventListener('DOMContentLoaded', () => {
+        const intervalSelect = document.getElementById('interval-select');
+        const callNumberButton = document.getElementById('call-number-button');
+        const playPauseButton = document.getElementById('play-pause-button');
+        const endGameButton = document.getElementById('end-game-button');
+        const checkWinnerButton = document.getElementById('check-winner-button');
+        const calledNumberElement = document.getElementById('called-number');
+        const calledNumbersContainer = document.getElementById('called-numbers-container');
+        const totalBetAmountElement = document.getElementById('total-bet-amount');
+        const countdownElement = document.getElementById('countdown');
+        const totalCallsElement = document.getElementById('total-calls');
+        const winnerModalBody = document.getElementById('winner-modal-body');
+        const rows = {
+            B: document.getElementById('row-B'),
+            I: document.getElementById('row-I'),
+            N: document.getElementById('row-N'),
+            G: document.getElementById('row-G'),
+            O: document.getElementById('row-O')
+        };
 
-            const numbers = {
-                B: Array.from({ length: 15 }, (_, i) => i + 1),
-                I: Array.from({ length: 15 }, (_, i) => i + 16),
-                N: Array.from({ length: 15 }, (_, i) => i + 31),
-                G: Array.from({ length: 15 }, (_, i) => i + 46),
-                O: Array.from({ length: 15 }, (_, i) => i + 61),
-            };
+        const numbers = {
+            B: Array.from({ length: 15 }, (_, i) => i + 1),
+            I: Array.from({ length: 15 }, (_, i) => i + 16),
+            N: Array.from({ length: 15 }, (_, i) => i + 31),
+            G: Array.from({ length: 15 }, (_, i) => i + 46),
+            O: Array.from({ length: 15 }, (_, i) => i + 61),
+        };
 
-            const calledNumbers = new Set();
-            let intervalId = null;
-            let paused = false;
-            let totalCalls = 0;
-            let countdownValue = 0;
+        const calledNumbers = new Set();
+        let intervalId = null;
+        let paused = false;
+        let totalCalls = 0;
+        let countdownValue = 0;
 
-            const ballColors = {
-                B: 'red',
-                I: 'orange',
-                N: 'yellow',
-                G: 'green',
-                O: 'blue'
-            };
+        const ballColors = {
+            B: 'red',
+            I: 'orange',
+            N: 'yellow',
+            G: 'green',
+            O: 'blue'
+        };
 
-            const ttsUrls = {
-                B: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ቢ&tl=am&client=tw-ob',
-                I: 'https://translate.google.com/translate_tts?ie=UTF-8&q=አይ&tl=am&client=tw-ob',
-                N: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ኤን&tl=am&client=tw-ob',
-                G: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ጂ&tl=am&client=tw-ob',
-                O: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ኦ&tl=am&client=tw-ob'
-            };
+        const ttsUrls = {
+            B: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ቢ&tl=am&client=tw-ob',
+            I: 'https://translate.google.com/translate_tts?ie=UTF-8&q=አይ&tl=am&client=tw-ob',
+            N: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ኤን&tl=am&client=tw-ob',
+            G: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ጂ&tl=am&client=tw-ob',
+            O: 'https://translate.google.com/translate_tts?ie=UTF-8&q=ኦ&tl=am&client=tw-ob'
+        };
 
-            function playTTS(letter, number) {
-                const audioLetter = new Audio(ttsUrls[letter]);
-                audioLetter.play();
-                audioLetter.addEventListener('ended', () => {
-                    const audioNumber = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${number}&tl=am&client=tw-ob`);
-                    audioNumber.play();
-                });
+        function playTTS(letter, number) {
+            const audioLetter = new Audio(ttsUrls[letter]);
+            audioLetter.play();
+            audioLetter.addEventListener('ended', () => {
+                const audioNumber = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${number}&tl=am&client=tw-ob`);
+                audioNumber.play();
+            });
+        }
+
+        function initializeBoard() {
+            for (const [letter, nums] of Object.entries(numbers)) {
+                for (const num of nums) {
+                    const div = document.createElement('div');
+                    div.classList.add('number');
+                    div.textContent = num;
+                    div.dataset.number = `${letter}${num}`;
+                    rows[letter].appendChild(div);
+                }
             }
+            highlightNumbersRandomly(); // Call the highlightNumbersRandomly function after initializing the board
+        }
 
-            function initializeBoard() {
-                for (const [letter, nums] of Object.entries(numbers)) {
-                    for (const num of nums) {
-                        const div = document.createElement('div');
-                        div.classList.add('number');
-                        div.textContent = num;
-                        div.dataset.number = `${letter}${num}`;
-                        rows[letter].appendChild(div);
+        function getRandomNumber() {
+            const availableNumbers = [];
+            for (const [letter, nums] of Object.entries(numbers)) {
+                for (const num of nums) {
+                    const number = `${letter}${num}`;
+                    if (!calledNumbers.has(number)) {
+                        availableNumbers.push(number);
                     }
                 }
-                highlightNumbersRandomly(); // Call the highlightNumbersRandomly function after initializing the board
             }
+            if (availableNumbers.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+            return availableNumbers[randomIndex];
+        }
 
-            function getRandomNumber() {
-                const availableNumbers = [];
-                for (const [letter, nums] of Object.entries(numbers)) {
-                    for (const num of nums) {
-                        const number = `${letter}${num}`;
-                        if (!calledNumbers.has(number)) {
-                            availableNumbers.push(number);
-                        }
-                    }
+        function callNumber() {
+            const number = getRandomNumber();
+            if (!number) return;
+            calledNumbers.add(number);
+            totalCalls += 1;
+
+            // Save the called numbers to localStorage
+            localStorage.setItem('called_numbers', JSON.stringify(Array.from(calledNumbers)));
+
+            const [letter, num] = [number[0], parseInt(number.slice(1))];
+            const numberElement = [...rows[letter].children].find(
+                (div) => parseInt(div.textContent) === num
+            );
+            numberElement.classList.add('called');
+
+            calledNumberElement.innerHTML = `<div class="ball ${letter.toLowerCase()}" style="background-color: ${ballColors[letter]}"><span>${letter}</span><span>${num}</span></div>`;
+            const calledNumberItem = document.createElement('div');
+            calledNumberItem.classList.add('called-number-item', letter.toLowerCase());
+            calledNumberItem.innerHTML = `<span>${letter}</span><span>${num}</span>`;
+
+            // Show only the 4 most recently called numbers
+            if (calledNumbersContainer.children.length >= 4) {
+                calledNumbersContainer.removeChild(calledNumbersContainer.firstChild);
+            }
+            calledNumbersContainer.appendChild(calledNumberItem);
+
+            totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
+            startCountdown();
+            playTTS(letter, num);  // Play the TTS audio for the called letter and number
+        }
+
+        function startCountdown() {
+            countdownValue = parseInt(intervalSelect.value);
+            countdownElement.textContent = countdownValue;
+
+            const countdownInterval = setInterval(() => {
+                if (countdownValue > 1) {
+                    countdownValue -= 1;
+                    countdownElement.textContent = countdownValue;
+                } else {
+                    clearInterval(countdownInterval);
                 }
-                if (availableNumbers.length === 0) return null;
-                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
-                return availableNumbers[randomIndex];
-            }
+            }, 1000);
+        }
 
-            function callNumber() {
-                const number = getRandomNumber();
-                if (!number) return;
-                calledNumbers.add(number);
-                totalCalls += 1;
+        function endGame() {
+            // Record the bet amount at the end of the game
+            recordBetAmount();
 
-                // Save the called numbers to localStorage
-                localStorage.setItem('called_numbers', JSON.stringify(Array.from(calledNumbers)));
+            // Clear localStorage
+            localStorage.removeItem('called_numbers');
+            localStorage.removeItem('bingo_boards');
+            localStorage.removeItem('selected_boards');
+            localStorage.removeItem('bet_amount');
 
-                const [letter, num] = [number[0], parseInt(number.slice(1))];
-                const numberElement = [...rows[letter].children].find(
-                    (div) => parseInt(div.textContent) === num
-                );
-                numberElement.classList.add('called');
+            // Reset the game state
+            calledNumbers.clear();
+            calledNumberElement.textContent = '';
+            calledNumbersContainer.innerHTML = '';
+            totalCalls = 0;
+            totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
+            countdownElement.textContent = '';
 
-                calledNumberElement.innerHTML = `<div class="ball ${letter.toLowerCase()}" style="background-color: ${ballColors[letter]}"><span>${letter}</span><span>${num}</span></div>`;
-                const calledNumberItem = document.createElement('div');
-                calledNumberItem.classList.add('called-number-item', letter.toLowerCase());
-                calledNumberItem.innerHTML = `<span>${letter}</span><span>${num}</span>`;
-
-                // Show only the 4 most recently called numbers
-                if (calledNumbersContainer.children.length >= 4) {
-                    calledNumbersContainer.removeChild(calledNumbersContainer.firstChild);
+            // Reset board UI
+            Object.keys(rows).forEach(letter => {
+                while (rows[letter].firstChild) {
+                    rows[letter].removeChild(rows[letter].firstChild);
                 }
-                calledNumbersContainer.appendChild(calledNumberItem);
+            });
 
-                totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
-                startCountdown();
-                playTTS(letter, num);  // Play the TTS audio for the called letter and number
-            }
+            // Reinitialize the board
+            initializeBoard();
 
-            function startCountdown() {
-                countdownValue = parseInt(intervalSelect.value);
-                countdownElement.textContent = countdownValue;
+            // Redirect to select_board.html
+            window.location.href = 'index.html';
+        }
 
-                const countdownInterval = setInterval(() => {
-                    if (countdownValue > 1) {
-                        countdownValue -= 1;
-                        countdownElement.textContent = countdownValue;
-                    } else {
-                        clearInterval(countdownInterval);
-                    }
-                }, 1000);
-            }
+        function startCallingNumbers() {
+            const interval = parseInt(intervalSelect.value) * 1000;
+            callNumber();
+            intervalId = setInterval(() => {
+                if (!paused) callNumber();
+            }, interval);
+        }
 
-            function endGame() {
-                // Record the bet amount at the end of the game
-                recordBetAmount();
+        function stopCallingNumbers() {
+            clearInterval(intervalId);
+        }
 
-                // Clear localStorage
-                localStorage.removeItem('called_numbers');
-                localStorage.removeItem('bingo_boards');
-                localStorage.removeItem('selected_boards');
-                localStorage.removeItem('bet_amount');
-
-                // Reset the game state
-                calledNumbers.clear();
-                calledNumberElement.textContent = '';
-                calledNumbersContainer.innerHTML = '';
-                totalCalls = 0;
-                totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
-                countdownElement.textContent = '';
-
-                // Reset board UI
-                Object.keys(rows).forEach(letter => {
-                    while (rows[letter].firstChild) {
-                        rows[letter].removeChild(rows[letter].firstChild);
-                    }
-                });
-
-                // Reinitialize the board
-                initializeBoard();
-
-                // Redirect to select_board.html
-                window.location.href = 'index.html';
-            }
-
-            function startCallingNumbers() {
-                const interval = parseInt(intervalSelect.value) * 1000;
-                callNumber();
-                intervalId = setInterval(() => {
-                    if (!paused) callNumber();
-                }, interval);
-            }
-
-            function stopCallingNumbers() {
-                clearInterval(intervalId);
-            }
-
-           function checkWinner() {
+        function checkWinner() {
             const boardNumber = parseInt(document.getElementById('board-number-input').value);
             if (isNaN(boardNumber) || boardNumber < 1) {
                 showModal('Please enter a valid board number.');
@@ -348,8 +348,9 @@
             }
 
             const board = boards[boardNumber - 1];
-            const hasWon = checkBoard(board);
-            showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet, hasWon);
+            const winningPattern = checkBoard(board);
+            const hasWon = !!winningPattern;
+            showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet, winningPattern);
             playPopupSound(hasWon);
         }
 
@@ -380,23 +381,22 @@
 
             for (const pattern of winningPatterns) {
                 if (pattern.every(([r, c]) => calledNumbers.has(`${'BINGO'[c]}${board[r][c]}`) || board[r][c] === 'FREE')) {
-                    return true;
+                    return pattern;
                 }
             }
-            return false;
+            return null;
         }
 
-
-           function showModal(message, board = null, calledNumbersSet = null, isWinner = false) {
+        function showModal(message, board = null, calledNumbersSet = null, winningPattern = null) {
             winnerModalBody.innerHTML = `<p>${message}</p>`;
             if (board) {
-                const boardElement = renderBingoBoard(board, calledNumbersSet, isWinner);
+                const boardElement = renderBingoBoard(board, calledNumbersSet, winningPattern);
                 winnerModalBody.appendChild(boardElement);
             }
             $('#winnerModal').modal('show');
         }
 
-        function renderBingoBoard(board, calledNumbersSet, isWinner) {
+        function renderBingoBoard(board, calledNumbersSet, winningPattern) {
             const boardContainer = document.createElement('div');
             boardContainer.classList.add('bingo-board', 'shadow-sm', 'rounded', 'mb-4');
 
@@ -423,8 +423,11 @@
                             cellElement.classList.add('called-cell'); // Use the appropriate class to mark called numbers
                         }
                     }
-                    // Apply winner or loser class
-                    cellElement.classList.add(isWinner ? 'winner-cell' : 'loser-cell');
+                    if (winningPattern && winningPattern.some(([r, c]) => r === i && c === j)) {
+                        cellElement.classList.add('winner-cell');
+                    } else if (winningPattern !== null) {
+                        cellElement.classList.add('loser-cell');
+                    }
                     boardContainer.appendChild(cellElement);
                 }
             }
@@ -432,101 +435,82 @@
             return boardContainer;
         }
 
-            document.getElementById('history-button').addEventListener('click', function() {
-                window.location.href = 'history.html';
-            });
+        function highlightNumbersRandomly() {
+            const numberElements = document.querySelectorAll('.number');
+            const highlightedIndices = new Set();
 
-            function recordBetAmount() {
-                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-                const betAmount = localStorage.getItem('bet_amount');
-                const currentDate = new Date().toLocaleString();
+            function highlightNextNumber() {
+                if (highlightedIndices.size < numberElements.length) {
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * numberElements.length);
+                    } while (highlightedIndices.has(randomIndex));
 
-                if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-                    const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-                    const reducedBetAmount = totalBetAmount * 0.8; // 20% less
-
-                    let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
-                    betHistory.push({ amount: reducedBetAmount.toFixed(2), date: currentDate });
-                    localStorage.setItem('bet_history', JSON.stringify(betHistory));
+                    highlightedIndices.add(randomIndex);
+                    numberElements[randomIndex].classList.add('blink'); // Apply blink class
+                    setTimeout(() => {
+                        numberElements[randomIndex].classList.remove('blink'); // Remove blink class after blinking
+                        highlightNextNumber();
+                    }, 200); // Blink duration
                 }
             }
-            function recordBetAmount() {
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        const betAmount = localStorage.getItem('bet_amount');
-        const currentDate = new Date().toLocaleString();
 
-        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-            const reducedBetAmount = totalBetAmount * 0.8; // 20% less
-
-            let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
-            betHistory.push({ 
-                amount: reducedBetAmount.toFixed(2), 
-                date: currentDate, 
-                deducted: (totalBetAmount - reducedBetAmount).toFixed(2)
-            });
-            localStorage.setItem('bet_history', JSON.stringify(betHistory));
+            highlightNextNumber();
         }
-    }
-            function displayTotalBetAmount() {
-                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-                const betAmount = localStorage.getItem('bet_amount');
-                if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-                    const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-                    const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
-                    totalBetAmountElement.textContent = `ደራሽ: ${reducedBetAmount.toFixed(2)}`;
-                } else {
-                    totalBetAmountElement.textContent = 'ደራሽ: 0';
-                }
+
+        function recordBetAmount() {
+            const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+            const betAmount = localStorage.getItem('bet_amount');
+            const currentDate = new Date().toLocaleString();
+
+            if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+                const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+                const reducedBetAmount = totalBetAmount * 0.8; // 20% less
+
+                let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
+                betHistory.push({ 
+                    amount: reducedBetAmount.toFixed(2), 
+                    date: currentDate, 
+                    deducted: (totalBetAmount - reducedBetAmount).toFixed(2)
+                });
+                localStorage.setItem('bet_history', JSON.stringify(betHistory));
             }
+        }
 
-            function playPopupSound(isClear) {
-                const clearSound = document.getElementById('clear-result-sound');
-                const unclearSound = document.getElementById('unclear-result-sound');
-                console.log('Playing sound:', isClear ? 'clear' : 'unclear');
-                if (isClear) {
-                    clearSound.play().catch(e => console.log('Failed to play clear sound:', e));
-                } else {
-                    unclearSound.play().catch(e => console.log('Failed to play unclear sound:', e));
-                }
+        function displayTotalBetAmount() {
+            const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+            const betAmount = localStorage.getItem('bet_amount');
+            if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+                const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+                const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
+                totalBetAmountElement.textContent = `ደራሽ: ${reducedBetAmount.toFixed(2)}`;
+            } else {
+                totalBetAmountElement.textContent = 'ደራሽ: 0';
             }
-            
+        }
 
-            function highlightNumbersRandomly() {
-                const numberElements = document.querySelectorAll('.number');
-                const highlightedIndices = new Set();
-
-                function highlightNextNumber() {
-                    if (highlightedIndices.size < numberElements.length) {
-                        let randomIndex;
-                        do {
-                            randomIndex = Math.floor(Math.random() * numberElements.length);
-                        } while (highlightedIndices.has(randomIndex));
-
-                        highlightedIndices.add(randomIndex);
-                        numberElements[randomIndex].classList.add('blink'); // Apply blink class
-                        setTimeout(() => {
-                            numberElements[randomIndex].classList.remove('blink'); // Remove blink class after blinking
-                            highlightNextNumber();
-                        }, 200); // Blink duration
-                    }
-                }
-
-                highlightNextNumber();
+        function playPopupSound(isClear) {
+            const clearSound = document.getElementById('clear-result-sound');
+            const unclearSound = document.getElementById('unclear-result-sound');
+            console.log('Playing sound:', isClear ? 'clear' : 'unclear');
+            if (isClear) {
+                clearSound.play().catch(e => console.log('Failed to play clear sound:', e));
+            } else {
+                unclearSound.play().catch(e => console.log('Failed to play unclear sound:', e));
             }
-            
+        }
 
-            callNumberButton.addEventListener('click', startCallingNumbers);
-            playPauseButton.addEventListener('click', () => {
-                paused = !paused;
-                playPauseButton.textContent = paused ? 'Resume' : 'Pause';
-            });
-            endGameButton.addEventListener('click', endGame);
-            checkWinnerButton.addEventListener('click', checkWinner);
-
-            initializeBoard();
-            displayTotalBetAmount();
+        callNumberButton.addEventListener('click', startCallingNumbers);
+        playPauseButton.addEventListener('click', () => {
+            paused = !paused;
+            playPauseButton.textContent = paused ? 'Resume' : 'Pause';
         });
+        endGameButton.addEventListener('click', endGame);
+        checkWinnerButton.addEventListener('click', checkWinner);
+
+        initializeBoard();
+        displayTotalBetAmount();
+    });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
