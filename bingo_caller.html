@@ -318,108 +318,111 @@
                 clearInterval(intervalId);
             }
 
-            function checkWinner() {
-                const boardNumber = parseInt(document.getElementById('board-number-input').value);
-                if (isNaN(boardNumber) || boardNumber < 1) {
-                    showModal('Please enter a valid board number.');
-                    return;
-                }
-
-                const boards = JSON.parse(localStorage.getItem('bingo_boards'));
-                const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-                const calledNumbersSet = new Set(JSON.parse(localStorage.getItem('called_numbers')));
-
-                if (!boards || boardNumber > boards.length) {
-                    showModal('Board number not found.');
-                    return;
-                }
-
-                if (!selectedIndices.includes(boardNumber - 1)) {
-                    showModal(`Board number ${boardNumber} is not registered.`);
-                    return;
-                }
-
-                const board = boards[boardNumber - 1];
-                const hasWon = checkBoard(board);
-                showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet);
-                playPopupSound(hasWon);
+           function checkWinner() {
+            const boardNumber = parseInt(document.getElementById('board-number-input').value);
+            if (isNaN(boardNumber) || boardNumber < 1) {
+                showModal('Please enter a valid board number.');
+                return;
             }
 
-            function checkBoard(board) {
-                const winningPatterns = [
-                    // Horizontal patterns
-                    [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
-                    [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
-                    [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
-                    [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4]],
-                    [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
-                    // Vertical patterns
-                    [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
-                    [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]],
-                    [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2]],
-                    [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]],
-                    [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4]],
-                    // Diagonal patterns
-                    [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]],
-                    [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
-                    // Adjacent to free cell diagonal patterns
-                    [[1, 1], [2, 2], [3, 3], [1, 3], [3, 1]],
-                    // Corners and free spot patterns
-                    [[0, 0], [0, 4], [2, 2], [4, 0], [4, 4]],
-                    // Full board pattern
-                    [...Array(5).keys()].flatMap(i => [...Array(5).keys()].map(j => [i, j]))
-                ];
+            const boards = JSON.parse(localStorage.getItem('bingo_boards'));
+            const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+            const calledNumbersSet = new Set(JSON.parse(localStorage.getItem('called_numbers')));
 
-                for (const pattern of winningPatterns) {
-                    if (pattern.every(([r, c]) => calledNumbers.has(`${'BINGO'[c]}${board[r][c]}`) || board[r][c] === 'FREE')) {
-                        return true;
-                    }
-                }
-                return false;
+            if (!boards || boardNumber > boards.length) {
+                showModal('Board number not found.');
+                return;
             }
 
-            function showModal(message, board = null, calledNumbersSet = null) {
-                winnerModalBody.innerHTML = `<p>${message}</p>`;
-                if (board) {
-                    const boardElement = renderBingoBoard(board, calledNumbersSet);
-                    winnerModalBody.appendChild(boardElement);
-                }
-                $('#winnerModal').modal('show');
+            if (!selectedIndices.includes(boardNumber - 1)) {
+                showModal(`Board number ${boardNumber} is not registered.`);
+                return;
             }
 
-            function renderBingoBoard(board, calledNumbersSet) {
-                const boardContainer = document.createElement('div');
-                boardContainer.classList.add('bingo-board', 'shadow-sm', 'rounded', 'mb-4');
+            const board = boards[boardNumber - 1];
+            const hasWon = checkBoard(board);
+            showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet, hasWon);
+            playPopupSound(hasWon);
+        }
 
-                const headers = ['B', 'I', 'N', 'G', 'O'];
-                const headerClasses = ['header-b', 'header-i', 'header-n', 'header-g', 'header-o'];
-                headers.forEach((header, index) => {
-                    const headerCell = document.createElement('div');
-                    headerCell.textContent = header;
-                    headerCell.classList.add('header', headerClasses[index]);
-                    boardContainer.appendChild(headerCell);
-                });
+        function checkBoard(board) {
+            const winningPatterns = [
+                // Horizontal patterns
+                [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
+                [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
+                [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
+                [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4]],
+                [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
+                // Vertical patterns
+                [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+                [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]],
+                [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2]],
+                [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]],
+                [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4]],
+                // Diagonal patterns
+                [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]],
+                [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                // Adjacent to free cell diagonal patterns
+                [[1, 1], [2, 2], [3, 3], [1, 3], [3, 1]],
+                // Corners and free spot patterns
+                [[0, 0], [0, 4], [2, 2], [4, 0], [4, 4]],
+                // Full board pattern
+                [...Array(5).keys()].flatMap(i => [...Array(5).keys()].map(j => [i, j]))
+            ];
 
-                for (let i = 0; i < 5; i++) {
-                    for (let j = 0; j < 5; j++) {
-                        const cellElement = document.createElement('div');
-                        cellElement.textContent = board[i][j];
-                        const cellValue = board[i][j];
+            for (const pattern of winningPatterns) {
+                if (pattern.every(([r, c]) => calledNumbers.has(`${'BINGO'[c]}${board[r][c]}`) || board[r][c] === 'FREE')) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-                        if (cellValue === 'FREE') {
-                            cellElement.classList.add('free');
-                        } else {
-                            const cellId = `${headers[j]}${cellValue}`;
-                            if (calledNumbersSet.has(cellId)) {
-                                cellElement.classList.add('called-cell'); // Use the appropriate class to mark called numbers
-                            }
+
+           function showModal(message, board = null, calledNumbersSet = null, isWinner = false) {
+            winnerModalBody.innerHTML = `<p>${message}</p>`;
+            if (board) {
+                const boardElement = renderBingoBoard(board, calledNumbersSet, isWinner);
+                winnerModalBody.appendChild(boardElement);
+            }
+            $('#winnerModal').modal('show');
+        }
+
+        function renderBingoBoard(board, calledNumbersSet, isWinner) {
+            const boardContainer = document.createElement('div');
+            boardContainer.classList.add('bingo-board', 'shadow-sm', 'rounded', 'mb-4');
+
+            const headers = ['B', 'I', 'N', 'G', 'O'];
+            const headerClasses = ['header-b', 'header-i', 'header-n', 'header-g', 'header-o'];
+            headers.forEach((header, index) => {
+                const headerCell = document.createElement('div');
+                headerCell.textContent = header;
+                headerCell.classList.add('header', headerClasses[index]);
+                boardContainer.appendChild(headerCell);
+            });
+
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    const cellElement = document.createElement('div');
+                    cellElement.textContent = board[i][j];
+                    const cellValue = board[i][j];
+
+                    if (cellValue === 'FREE') {
+                        cellElement.classList.add('free');
+                    } else {
+                        const cellId = `${headers[j]}${cellValue}`;
+                        if (calledNumbersSet.has(cellId)) {
+                            cellElement.classList.add('called-cell'); // Use the appropriate class to mark called numbers
                         }
-                        boardContainer.appendChild(cellElement);
                     }
+                    // Apply winner or loser class
+                    cellElement.classList.add(isWinner ? 'winner-cell' : 'loser-cell');
+                    boardContainer.appendChild(cellElement);
                 }
-
-                return boardContainer;
             }
+
+            return boardContainer;
+        }
 
             document.getElementById('history-button').addEventListener('click', function() {
                 window.location.href = 'history.html';
