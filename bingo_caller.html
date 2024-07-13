@@ -150,7 +150,7 @@
     <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
     <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
     const playPauseButton = document.getElementById('play-pause-button');
@@ -192,17 +192,35 @@
         O: 'blue'
     };
 
-    function playTTS(letter, number) {
-        const apiKey = 'ClMdBzj45efeea931f1e8890a6dbed3c2b11ecb5dUvjGIaimV';
-        const baseUrl = 'https://api.speakatoo.com/tts';
+    const apiKey = 'ClMdBzj45efeea931f1e8890a6dbed3c2b11ecb5dUvjGIaimV';
+    const baseUrl = 'https://api.speakatoo.com/tts';
 
-        const playAudio = (text) => {
-            const audio = new Audio(`${baseUrl}?key=${apiKey}&text=${encodeURIComponent(text)}&lang=am`);
-            audio.play();
-        };
+    async function fetchTTSUrl(text, lang='am') {
+        const url = `${baseUrl}?key=${apiKey}&text=${encodeURIComponent(text)}&lang=${lang}`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.url;
+        } catch (error) {
+            console.error('Failed to fetch TTS audio:', error);
+            return null;
+        }
+    }
 
-        playAudio(letter);
-        setTimeout(() => playAudio(number), 1000);
+    async function playTTS(letter, number) {
+        const letterUrl = await fetchTTSUrl(letter);
+        const numberUrl = await fetchTTSUrl(number.toString());
+
+        if (letterUrl) {
+            const audioLetter = new Audio(letterUrl);
+            audioLetter.play();
+            audioLetter.addEventListener('ended', async () => {
+                if (numberUrl) {
+                    const audioNumber = new Audio(numberUrl);
+                    audioNumber.play();
+                }
+            });
+        }
     }
 
     function initializeBoard() {
@@ -506,6 +524,7 @@
     initializeBoard();
     displayTotalBetAmount();
 });
+
 
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
