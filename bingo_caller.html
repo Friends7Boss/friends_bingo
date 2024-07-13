@@ -150,7 +150,7 @@
     <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
     <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
     const playPauseButton = document.getElementById('play-pause-button');
@@ -195,8 +195,8 @@
     const apiKey = 'ClMdBzj45efeea931f1e8890a6dbed3c2b11ecb5dUvjGIaimV';
     const baseUrl = 'https://api.speakatoo.com/tts';
 
-    async function fetchTTSUrl(text, lang='am') {
-        const url = `${baseUrl}?key=${apiKey}&text=${encodeURIComponent(text)}&lang=${lang}`;
+    async function fetchTTSUrl(text, lang = 'am', gender = 'female') {
+        const url = `${baseUrl}?key=${apiKey}&text=${encodeURIComponent(text)}&lang=${lang}&gender=${gender}`;
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('Network response was not ok');
@@ -207,9 +207,9 @@
         }
     }
 
-    async function playTTS(letter, number) {
-        const letterUrl = await fetchTTSUrl(letter);
-        const numberUrl = await fetchTTSUrl(number.toString());
+    async function playTTS(letter, number, lang = 'am', gender = 'female') {
+        const letterUrl = await fetchTTSUrl(letter, lang, gender);
+        const numberUrl = await fetchTTSUrl(number.toString(), lang, gender);
 
         if (letterUrl) {
             const audioLetter = new Audio(letterUrl);
@@ -524,7 +524,6 @@
     initializeBoard();
     displayTotalBetAmount();
 });
-
 
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
