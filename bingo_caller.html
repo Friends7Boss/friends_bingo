@@ -150,45 +150,6 @@
     <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
     <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
- function playRecordedAudio(letter, number) {
-    // Base URL for the audio files on your GitHub repository
-    const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/main/audio-clips';
-
-    // Construct the URL for the letter audio file
-    const audioLetterURL = `${baseURL}/${letter}.mp3`;
-    console.log(`Playing letter audio from URL: ${audioLetterURL}`);
-
-    // Construct the URL for the number audio file
-    const audioNumberURL = `${baseURL}/${letter}${number}.mp3`;
-    console.log(`Playing number audio from URL: ${audioNumberURL}`);
-
-    // Create audio objects
-    const audioLetter = new Audio(audioLetterURL);
-    const audioNumber = new Audio(audioNumberURL);
-
-    // Play the letter audio first
-    audioLetter.play();
-
-    // Once the letter audio finishes, play the number audio
-    audioLetter.addEventListener('ended', () => {
-        console.log(`Finished playing letter audio. Now playing number audio from URL: ${audioNumberURL}`);
-        audioNumber.play();
-    });
-
-    // Error handling for audio playback
-    audioLetter.addEventListener('error', (e) => {
-        console.error(`Error playing letter audio: ${e}`);
-    });
-
-    audioNumber.addEventListener('error', (e) => {
-        console.error(`Error playing number audio: ${e}`);
-    });
-}
-
-// Example usage
-playRecordedAudio('B', '1');
-
-// JavaScript to integrate with the rest of your Bingo game functionality
 document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
