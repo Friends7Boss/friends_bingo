@@ -150,7 +150,46 @@
     <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
     <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
-   document.addEventListener('DOMContentLoaded', () => {
+ function playRecordedAudio(letter, number) {
+    // Base URL for the audio files on your GitHub repository
+    const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/main/audio-clips';
+
+    // Construct the URL for the letter audio file
+    const audioLetterURL = `${baseURL}/${letter}.mp3`;
+    console.log(`Playing letter audio from URL: ${audioLetterURL}`);
+
+    // Construct the URL for the number audio file
+    const audioNumberURL = `${baseURL}/${letter}${number}.mp3`;
+    console.log(`Playing number audio from URL: ${audioNumberURL}`);
+
+    // Create audio objects
+    const audioLetter = new Audio(audioLetterURL);
+    const audioNumber = new Audio(audioNumberURL);
+
+    // Play the letter audio first
+    audioLetter.play();
+
+    // Once the letter audio finishes, play the number audio
+    audioLetter.addEventListener('ended', () => {
+        console.log(`Finished playing letter audio. Now playing number audio from URL: ${audioNumberURL}`);
+        audioNumber.play();
+    });
+
+    // Error handling for audio playback
+    audioLetter.addEventListener('error', (e) => {
+        console.error(`Error playing letter audio: ${e}`);
+    });
+
+    audioNumber.addEventListener('error', (e) => {
+        console.error(`Error playing number audio: ${e}`);
+    });
+}
+
+// Example usage
+playRecordedAudio('B', '1');
+
+// JavaScript to integrate with the rest of your Bingo game functionality
+document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
     const playPauseButton = document.getElementById('play-pause-button');
@@ -192,19 +231,6 @@
         O: 'blue'
     };
 
-    function playRecordedAudio(B, 1) {
-            // Base URL for the audio files on your GitHub repository
-            const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/main/audio-clips';
-            
-            // Adjust the path for the audio clips
-            const audioLetter = new Audio(`${baseURL}/${letter}.mp3`);
-            audioLetter.play();
-            audioLetter.addEventListener('ended', () => {
-                const audioNumber = new Audio(`${baseURL}/${letter}${number}.mp3`);
-                audioNumber.play();
-            });
-        }
-
     function initializeBoard() {
         for (const [letter, nums] of Object.entries(numbers)) {
             for (const num of nums) {
@@ -228,7 +254,7 @@
                 }
             }
         }
-        if (availableNumbers.length === 4) return null;
+        if (availableNumbers.length === 0) return null;
         const randomIndex = Math.floor(Math.random() * availableNumbers.length);
         return availableNumbers[randomIndex];
     }
@@ -443,24 +469,7 @@
             localStorage.setItem('bet_history', JSON.stringify(betHistory));
         }
     }
-    function recordBetAmount() {
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        const betAmount = localStorage.getItem('bet_amount');
-        const currentDate = new Date().toLocaleString();
 
-        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-            const reducedBetAmount = totalBetAmount * 0.8; // 20% less
-
-            let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
-            betHistory.push({ 
-                amount: reducedBetAmount.toFixed(2), 
-                date: currentDate, 
-                deducted: (totalBetAmount - reducedBetAmount).toFixed(2)
-            });
-            localStorage.setItem('bet_history', JSON.stringify(betHistory));
-        }
-    }
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
         const betAmount = localStorage.getItem('bet_amount');
@@ -483,7 +492,6 @@
             unclearSound.play().catch(e => console.log('Failed to play unclear sound:', e));
         }
     }
-    
 
     function highlightNumbersRandomly() {
         const numberElements = document.querySelectorAll('.number');
@@ -507,7 +515,6 @@
 
         highlightNextNumber();
     }
-    
 
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
