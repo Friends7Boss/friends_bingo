@@ -193,14 +193,17 @@
     };
 
     function playRecordedAudio(letter, number) {
-        const baseURL = 'https://github.com/Friendstech7/friends_bingo/blob/main/audio-clips/B.mp3';
-        const audioLetter = new Audio(`${baseURL}/${letter}.mp3`);
-        audioLetter.play();
-        audioLetter.addEventListener('ended', () => {
-            const audioNumber = new Audio(`${baseURL}/${letter}${number}.mp3`);
-            audioNumber.play();
-        });
-    }
+            // Base URL for the audio files on your GitHub repository
+            const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/audio-clips';
+            
+            // Adjust the path for the audio clips
+            const audioLetter = new Audio(`${baseURL}/${letter}.mp3`);
+            audioLetter.play();
+            audioLetter.addEventListener('ended', () => {
+                const audioNumber = new Audio(`${baseURL}/${letter}${number}.mp3`);
+                audioNumber.play();
+            });
+        }
 
     function initializeBoard() {
         for (const [letter, nums] of Object.entries(numbers)) {
