@@ -150,7 +150,7 @@
     <audio id="clear-result-sound" src="sound/winner.m4a"></audio>
     <audio id="unclear-result-sound" src="sound/losser.m4a"></audio>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
     const playPauseButton = document.getElementById('play-pause-button');
@@ -192,35 +192,14 @@
         O: 'blue'
     };
 
-    const apiKey = 'ClMdBzj45efeea931f1e8890a6dbed3c2b11ecb5dUvjGIaimV';
-    const baseUrl = 'https://api.speakatoo.com/tts';
-
-    async function fetchTTSUrl(text, lang = 'am', gender = 'female') {
-        const url = `${baseUrl}?key=${apiKey}&text=${encodeURIComponent(text)}&lang=${lang}&gender=${gender}`;
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.url;
-        } catch (error) {
-            console.error('Failed to fetch TTS audio:', error);
-            return null;
-        }
-    }
-
-    async function playTTS(letter, number, lang = 'am', gender = 'female') {
-        const letterUrl = await fetchTTSUrl(letter, lang, gender);
-        const numberUrl = await fetchTTSUrl(number.toString(), lang, gender);
-
-        if (letterUrl) {
-            const audioLetter = new Audio(letterUrl);
-            audioLetter.play();
-            audioLetter.addEventListener('ended', async () => {
-                if (numberUrl) {
-                    const audioNumber = new Audio(numberUrl);
-                    audioNumber.play();
-                }
-            });
-        }
+    function playRecordedAudio(letter, number) {
+        const baseURL = 'https://github.com/Friendstech7/friends_bingo/blob/main/audio-clips/B.mp3'; // Adjust the path
+        const audioLetter = new Audio(`${baseURL}/${letter}.mp3`);
+        audioLetter.play();
+        audioLetter.addEventListener('ended', () => {
+            const audioNumber = new Audio(`${baseURL}/${letter}${number}.mp3`);
+            audioNumber.play();
+        });
     }
 
     function initializeBoard() {
@@ -279,7 +258,7 @@
 
         totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
         startCountdown();
-        playTTS(letter, num);  // Play the TTS audio for the called letter and number
+        playRecordedAudio(letter, num);  // Play the recorded audio for the called letter and number
     }
 
     function startCountdown() {
@@ -447,6 +426,20 @@
         window.location.href = 'history.html';
     });
 
+    function recordBetAmount() {
+        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+        const betAmount = localStorage.getItem('bet_amount');
+        const currentDate = new Date().toLocaleString();
+
+        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+            const reducedBetAmount = totalBetAmount * 0.8; // 20% less
+
+            let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
+            betHistory.push({ amount: reducedBetAmount.toFixed(2), date: currentDate });
+            localStorage.setItem('bet_history', JSON.stringify(betHistory));
+        }
+    }
     function recordBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
         const betAmount = localStorage.getItem('bet_amount');
