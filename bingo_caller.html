@@ -523,19 +523,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function recordBetAmount() {
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        const betAmount = localStorage.getItem('bet_amount');
-        const currentDate = new Date().toLocaleString();
+    const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+    const betAmount = localStorage.getItem('bet_amount');
+    const currentDate = new Date().toLocaleString();
 
-        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-            const reducedBetAmount = totalBetAmount * 0.8; // 20% less
+    if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+        const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+        const profit = totalBetAmount * 0.2; // Calculate 20% profit
 
-            let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
-            betHistory.push({ amount: reducedBetAmount.toFixed(2), date: currentDate });
-            localStorage.setItem('bet_history', JSON.stringify(betHistory));
-        }
+        let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
+        betHistory.push({ amount: profit.toFixed(2), date: currentDate });
+        localStorage.setItem('bet_history', JSON.stringify(betHistory));
     }
+}
+
 
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
