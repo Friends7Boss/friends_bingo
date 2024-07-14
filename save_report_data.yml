@@ -1,0 +1,67 @@
+name: Save Report Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date and Time'
+        required: true
+        default: ''
+      totalPlayers:
+        description: 'Total Players'
+        required: true
+        default: '0'
+      totalGames:
+        description: 'Total Games'
+        required: true
+        default: '0'
+      betAmount:
+        description: 'Bet Amount'
+        required: true
+        default: '0'
+      totalBetAmount:
+        description: 'Total Bet Amount'
+        required: true
+        default: '0'
+      profit:
+        description: 'Profit'
+        required: true
+        default: '0'
+
+jobs:
+  save_data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read existing data
+        id: read_data
+        run: |
+          if [[ ! -f report_data.json ]]; then
+            echo "[]" > report_data.json
+          fi
+          echo "::set-output name=data::$(cat report_data.json)"
+
+      - name: Append new data
+        id: append_data
+        run: |
+          existing_data=$(echo "${{ steps.read_data.outputs.data }}" | jq '.')
+          new_entry=$(jq -n \
+            --arg date "${{ github.event.inputs.date }}" \
+            --arg totalPlayers "${{ github.event.inputs.totalPlayers }}" \
+            --arg totalGames "${{ github.event.inputs.totalGames }}" \
+            --arg betAmount "${{ github.event.inputs.betAmount }}" \
+            --arg totalBetAmount "${{ github.event.inputs.totalBetAmount }}" \
+            --arg profit "${{ github.event.inputs.profit }}" \
+            '{date: $date, totalPlayers: $totalPlayers, totalGames: $totalGames, betAmount: $betAmount, totalBetAmount: $totalBetAmount, profit: $profit}')
+          updated_data=$(echo "${existing_data}" | jq '. + [$new_entry]')
+          echo "${updated_data}" > report_data.json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add report_data.json
+          git commit -m "Update report data"
+          git push
