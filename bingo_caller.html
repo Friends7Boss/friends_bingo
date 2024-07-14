@@ -612,8 +612,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const triggerGithubAction = async (data) => {
-        const url = `https://api.github.com/repos/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/actions/workflows/save_report_data.yml/dispatches`;
-        const token = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN';
+        const url = `https://api.github.com/repos/Friendstech7/friends_bingo/actions/workflows/save_report_data.yml/dispatches`;
+        const token = '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';
 
         const response = await fetch(url, {
             method: 'POST',
