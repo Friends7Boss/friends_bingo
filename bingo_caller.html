@@ -595,6 +595,45 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeBoard();
     displayTotalBetAmount();
 });
+document.addEventListener('DOMContentLoaded', () => {
+    const totalPlayers = 10; // Example value, replace with actual data
+    const totalGames = 5;    // Example value, replace with actual data
+    const betAmount = localStorage.getItem('bet_amount');
+    const totalBetAmount = totalPlayers * totalGames * betAmount;
+    const profit = totalBetAmount * 0.20;
+
+    const reportEntry = {
+        date: new Date().toLocaleString(),
+        totalPlayers: totalPlayers,
+        totalGames: totalGames,
+        betAmount: betAmount,
+        totalBetAmount: totalBetAmount,
+        profit: profit
+    };
+
+    const triggerGithubAction = async (data) => {
+        const url = `https://api.github.com/repos/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/actions/workflows/save_report_data.yml/dispatches`;
+        const token = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN';
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+                ref: 'main',
+                inputs: data
+            })
+        });
+
+        if (!response.ok) {
+            console.error('Error triggering GitHub Action:', response.statusText);
+        }
+    };
+
+    triggerGithubAction(reportEntry);
+});
 
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
