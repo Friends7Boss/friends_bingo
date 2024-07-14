@@ -97,11 +97,11 @@
             let totalGames = 0;
 
             function updateTotalProfitAndGames() {
-                const records = JSON.parse(localStorage.getItem('transaction_records')) || [];
+                const records = JSON.parse(localStorage.getItem('bet_history')) || [];
                 const today = new Date().toISOString().split('T')[0];
-                const todayRecords = records.filter(record => record.date === today);
+                const todayRecords = records.filter(record => record.date.startsWith(today));
 
-                totalProfit = todayRecords.reduce((sum, record) => sum + parseFloat(record.profit), 0).toFixed(2);
+                totalProfit = todayRecords.reduce((sum, record) => sum + parseFloat(record.amount), 0).toFixed(2);
                 totalGames = todayRecords.length;
 
                 totalProfitElement.textContent = `Total Profit Today: $${totalProfit}`;
@@ -109,8 +109,8 @@
             }
 
             function searchRecords(date) {
-                const records = JSON.parse(localStorage.getItem('transaction_records')) || [];
-                const filteredRecords = records.filter(record => record.date === date);
+                const records = JSON.parse(localStorage.getItem('bet_history')) || [];
+                const filteredRecords = records.filter(record => record.date.startsWith(date));
                 displaySearchResults(filteredRecords);
             }
 
@@ -133,7 +133,7 @@
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>${record.date}</td>
-                            <td>$${record.profit}</td>
+                            <td>$${record.amount}</td>
                         `;
                         tbody.appendChild(tr);
                     });
@@ -158,12 +158,11 @@
             updateTotalProfitAndGames();
         });
 
-        // Save the 20% profit and game records
         function saveGameRecord(profit) {
-            const records = JSON.parse(localStorage.getItem('transaction_records')) || [];
+            const records = JSON.parse(localStorage.getItem('bet_history')) || [];
             const currentDate = new Date().toISOString().split('T')[0];
-            records.push({ date: currentDate, profit: profit.toFixed(2) });
-            localStorage.setItem('transaction_records', JSON.stringify(records));
+            records.push({ date: currentDate, amount: profit.toFixed(2) });
+            localStorage.setItem('bet_history', JSON.stringify(records));
         }
     </script>
 </body>
