@@ -1,164 +1,138 @@
+body.bg-light {
+    background-color: #f8f9fa;
+}
 
-body { 
-    position: relative; 
-    min-height: 100vh; 
-    padding: 20px; 
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+.container.text-center {
+    margin-top: 20px;
 }
-.background-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(26, 25, 25); /* Replace with your image path */
-    background-size: cover;
-    background-position: center;
+
+.total-bet-amount, .total-calls {
+    font-size: 20px;
+    margin-bottom: 10px;
 }
-.left-down-corner {
-     position: absolute; 
-     bottom: 570px; 
-     left: 20px; 
-    }
-.center-container { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    margin-top: 10px; 
-}
+
 .called-number {
-     font-size: 2rem; 
-     margin-top: 20px; 
-     left:10px; 
-     font-weight: bolder; 
-    }
-.numbers-container { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    top: -140px; 
-    left: 55px; 
-    margin-bottom: 539px; 
-    color: #fff; position: relative; }
-.row { 
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.called-numbers-container, .numbers-container {
+    margin-bottom: 20px;
+}
+
+.row {
     display: flex;
-     align-items: center;
-      margin-bottom: 10px;
-     }
-.row h2 {
-     width: 60px;
-     height: 60px; 
-     margin-right: 50px;
-     right: -60px; 
-     font-family: 'Times New Roman', Times; 
-     font-size: 3rem; 
-     border: 4px outset rgb(255, 123, 15); 
-     border-radius: 5px; background-color: black; 
-     color: #f8f9fa; 
-     margin-left: 200px; 
-    }
-.number { 
-    width: 50px; 
-    height: 60px; 
-    display: flex; 
-    font-family: 'Times New Roman', Times, serif; 
-    font-size: 40px; align-items: center; 
-    justify-content: center; 
-    font-weight: bolder 1px solid aqua; 
-    margin-right: 5px;
-    background-color: black; 
-    color: white; 
-} /* Change color to white */
-.called { 
-    background-color: rgb(255, 210, 10); 
-    color: rgb(14, 10, 66) 
+    justify-content: center;
 }
-.highlight { 
-    background-color: rgb(255, 0, 0); 
-} /* Highlight color changed to yellow */
-.bingo-board { 
-    display: grid; 
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 1px; width: 70%; 
-    margin-right: 40px; 
-    margin-bottom: 20px; 
-    border: 2px solid blue; 
-    padding: 1px; 
-    background-color: #f8f9fa; 
+
+.number {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+    border: 1px solid #ccc;
 }
-.bingo-board div { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: 100px; 
-    height: 80px; 
-    border: 3px solid blue; 
+
+.number.called {
+    background-color: yellow;
 }
-.bingo-board .header { font-size: xx-large;font-weight: bolder; }
-.bingo-board .header-b { background-color: red; color: white; }
-.bingo-board .header-i { background-color: #df9816; color: white; }
-.bingo-board .header-n { background-color: #ffff00; color: black; }
-.bingo-board .header-g { background-color: #008000; color: white; }
-.bingo-board .header-o { background-color: #0000ff; color: white; }
-.bingo-board .free { background-color: aqua; color: white; }
-.board-title { grid-column: span 5; text-align: center; font-weight: bold; margin-bottom: 10px; }
-.called-numbers-container { 
-    display: flex; 
-    flex-direction: row; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    position: absolute; 
-    margin-top: 275px; 
-    margin-left: 305px; 
-}
-.called-number-item { 
-    margin: 5px; 
-    font-size: 3rem; 
-    width: 140px; 
-    height: 140px;
-    color: rgb(7, 4, 4); 
+
+.ball {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    display: flex; flex-direction: column; 
-    align-items: center; justify-content: center; 
-    font-weight: bold; background-color: white; border: 8px solid; }
-.called-number-item span { display: block; }
-.called-number-item.b { border-color: red; background-color: #ffffff; }
-.called-number-item.i { border-color: orange; background-color: #ffffff; }
-.called-number-item.n { border-color: yellow; background-color: #ffffff; }
-.called-number-item.g { border-color: green; background-color: #ffffff; }
-.called-number-item.o { border-color: blue; background-color: #ffffff; }
-.winner { border: 2px solid green; }
-.result { margin-top: 20px; font-size: xx-large; font-weight: bold;  }
-.total-bet-amount { position: absolute; top: 460px; 
-    right: 10px; font-size: 2.5rem; font-weight: bold; 
-    color: rgb(255, 255, 255); background-color: rgb(85, 87, 87); 
-    border: #ffff00; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; }
-.called-cell { background-color:yellow; font-size: xx-large; font-weight: bold;  }
-.marked {color: red; }
-.countdown { font-size: 3.5rem; font-weight: bold; color: rgb(245, 241, 41); margin-bottom: 23px; }
-.total-calls { font-size: 2rem; font-weight: bold; 
-    color: rgb(245, 241, 41); margin-top: 10px; margin-right: 1050px; }
-.ball { width: 180px; height: 180px; bottom: 10px; 
-    left: 130px;background-color: #ffffff; color: black; 
-    border-radius: 50%; display: flex; flex-direction: column; 
-    align-items: center; justify-content: center; font-size: 4rem; 
-    font-weight: bold; animation: pop-up 0.5s ease-out; position: absolute; 
-    top:450px; border: 10px solid whitesmoke; }
-.ball span { display: block; }
-.ball.b { border-color: red;   }
-.ball.i { border-color: orange; }
-.ball.n { border-color: yellow; }
-.ball.g { border-color: green; }
-.ball.o { border-color: blue; }
-@keyframes pop-up { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-@keyframes blink { 0%, 100% { color: white; } 50% { color: yellow; } } /* Blink animation */
-.blink { animation: blink 0.1s ease-in-out; background-color: red; } /* Apply blink animation */
-.btn-info { background-color: rgb(173, 98, 98);}
-.winner-cell {
-background-color: lightgreen; /* Green color for winner cells */
-color: black;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 18px;
+    margin: 0 5px;
 }
-.loser-cell {
-background-color: lightcoral; /* Red color for loser cells */
-color: black;
+
+.blink {
+    animation: blink-animation 0.5s steps(5, start) infinite;
+    -webkit-animation: blink-animation 0.5s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+.left-down-corner {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-control {
+    width: 100%;
+}
+
+button.btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.bingo-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+}
+
+.bingo-board .header {
+    font-weight: bold;
+    text-align: center;
+}
+
+.bingo-board .header-b {
+    background-color: red;
+    color: white;
+}
+
+.bingo-board .header-i {
+    background-color: orange;
+    color: white;
+}
+
+.bingo-board .header-n {
+    background-color: yellow;
+    color: black;
+}
+
+.bingo-board .header-g {
+    background-color: green;
+    color: white;
+}
+
+.bingo-board .header-o {
+    background-color: blue;
+    color: white;
+}
+
+.bingo-board div {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.bingo-board .called-cell {
+    background-color: lightgreen;
+}
+
+.bingo-board .free {
+    background-color: lightgray;
 }

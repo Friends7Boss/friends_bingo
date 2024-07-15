@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCallsElement = document.getElementById('total-calls');
     const countdownElement = document.getElementById('countdown');
     const winnerModalBody = document.getElementById('winner-modal-body');
-    const reportButton = document.getElementById('report-button');
     const rows = {
         B: document.getElementById('row-B'),
         I: document.getElementById('row-I'),
@@ -261,25 +260,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return boardContainer;
     }
 
-    reportButton.addEventListener('click', function() {
-        window.location.href = 'report.html';
-    });
-
     function recordBetAmount() {
-    const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-    const betAmount = localStorage.getItem('bet_amount');
-    const currentDate = new Date().toLocaleString();
+        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+        const betAmount = localStorage.getItem('bet_amount');
+        const currentDate = new Date().toLocaleString();
 
-    if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-        const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-        const profit = totalBetAmount * 0.2; // Calculate 20% profit
+        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+            const profit = totalBetAmount * 0.2; // Calculate 20% profit
 
-        let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
-        betHistory.push({ amount: profit.toFixed(2), date: currentDate });
-        localStorage.setItem('bet_history', JSON.stringify(betHistory));
+            let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
+            betHistory.push({ amount: profit.toFixed(2), date: currentDate });
+            localStorage.setItem('bet_history', JSON.stringify(betHistory));
+        }
     }
-}
-
 
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
@@ -304,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-      function highlightNumbersRandomly() {
+    function highlightNumbersRandomly() {
         const numberElements = document.querySelectorAll('.number');
         const highlightedIndices = new Set();
 
@@ -338,52 +332,3 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeBoard();
     displayTotalBetAmount();
 });
-document.addEventListener('DOMContentLoaded', () => {
-    const totalPlayers = 10; // Example value, replace with actual data
-    const totalGames = 5;    // Example value, replace with actual data
-    const betAmount = localStorage.getItem('bet_amount');
-    const totalBetAmount = totalPlayers * totalGames * betAmount;
-    const profit = totalBetAmount * 0.20;
-
-    const reportEntry = {
-        date: new Date().toLocaleString(),
-        totalPlayers: totalPlayers,
-        totalGames: totalGames,
-        betAmount: betAmount,
-        totalBetAmount: totalBetAmount,
-        profit: profit
-    };
-
-    const triggerGithubAction = async (data) => {
-        const url = `https://api.github.com/repos/Friendstech7/friends_bingo/actions/workflows/save_report_data.yml/dispatches`;
-        const token = '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';
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-                ref: 'main',
-                inputs: data
-            })
-        });
-
-        if (!response.ok) {
-            console.error('Error triggering GitHub Action:', response.statusText);
-        }
-    };
-
-    triggerGithubAction(reportEntry);
-});
-document.getElementById('callerForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const totalBetAmount = document.getElementById('totalBetAmount').value;
-            const totalCalls = document.getElementById('totalCalls').value;
-            const totalPlayers = document.getElementById('totalPlayers').value;
-            localStorage.setItem('totalBetAmount', totalBetAmount);
-            localStorage.setItem('totalCalls', totalCalls);
-            localStorage.setItem('totalPlayersCaller', totalPlayers);
-            window.location.href = 'report.html';
-        });
