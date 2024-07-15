@@ -482,3 +482,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     triggerGithubAction(reportEntry);
 });
+document.getElementById('callerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const totalBetAmount = document.getElementById('totalBetAmount').value;
+            const totalCalls = document.getElementById('totalCalls').value;
+            const totalPlayers = document.getElementById('totalPlayers').value;
+            localStorage.setItem('totalBetAmount', totalBetAmount);
+            localStorage.setItem('totalCalls', totalCalls);
+            localStorage.setItem('totalPlayersCaller', totalPlayers);
+            window.location.href = 'report.html';
+        });
