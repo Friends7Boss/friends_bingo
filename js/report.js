@@ -20,8 +20,8 @@ const ReportPage = () => {
   useEffect(() => {
     const loadRecords = async () => {
       try {
-        const callerData = await fetchData('/api/caller');
-        const indexData = await fetchData('/api/index');
+        const callerData = await fetchData('/api/bingo_caller.html');
+        const indexData = await fetchData('/api/index.html');
         const combinedData = [...callerData, ...indexData];
         const processedData = combinedData.map((item, index) => ({
           id: index + 1,
