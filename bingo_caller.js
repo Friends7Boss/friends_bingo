@@ -113,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const calledNumberElement = document.getElementById('called-number');
     const calledNumbersContainer = document.getElementById('called-numbers-container');
     const totalBetAmountElement = document.getElementById('total-bet-amount');
-    const totalCallsElement = document.getElementById('total-calls');
     const countdownElement = document.getElementById('countdown');
+    const totalCallsElement = document.getElementById('total-calls');
     const winnerModalBody = document.getElementById('winner-modal-body');
     const rows = {
         B: document.getElementById('row-B'),
@@ -366,20 +366,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return boardContainer;
     }
 
+    document.getElementById('history-button').addEventListener('click', function() {
+        window.location.href = 'history.html';
+    });
+
     function recordBetAmount() {
-        const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
-        const betAmount = localStorage.getItem('bet_amount');
-        const currentDate = new Date().toLocaleString();
+    const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
+    const betAmount = localStorage.getItem('bet_amount');
+    const currentDate = new Date().toLocaleString();
 
-        if (selectedIndices && selectedIndices.length > 0 && betAmount) {
-            const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
-            const profit = totalBetAmount * 0.2; // Calculate 20% profit
+    if (selectedIndices && selectedIndices.length > 0 && betAmount) {
+        const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
+        const profit = totalBetAmount * 0.2; // Calculate 20% profit
 
-            let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
-            betHistory.push({ amount: profit.toFixed(2), date: currentDate });
-            localStorage.setItem('bet_history', JSON.stringify(betHistory));
-        }
+        let betHistory = JSON.parse(localStorage.getItem('bet_history')) || [];
+        betHistory.push({ amount: profit.toFixed(2), date: currentDate });
+        localStorage.setItem('bet_history', JSON.stringify(betHistory));
     }
+}
+
 
     function displayTotalBetAmount() {
         const selectedIndices = JSON.parse(localStorage.getItem('selected_boards'));
@@ -404,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function highlightNumbersRandomly() {
+      function highlightNumbersRandomly() {
         const numberElements = document.querySelectorAll('.number');
         const highlightedIndices = new Set();
 
