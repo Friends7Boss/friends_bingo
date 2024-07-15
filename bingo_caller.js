@@ -1,4 +1,4 @@
-@ -1,109 +1,3 @@
+
 function playRecordedAudio(letter, number) {
     // Base URL for the audio files on your GitHub repository
     const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/main/audio-clips';
@@ -108,7 +108,6 @@ playRecordedAudio('O', '75');
 document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
-@ -113,9 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const calledNumberElement = document.getElementById('called-number');
     const calledNumbersContainer = document.getElementById('called-numbers-container');
     const totalBetAmountElement = document.getElementById('total-bet-amount');
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = {
         B: document.getElementById('row-B'),
         I: document.getElementById('row-I'),
-@ -366,128 +261,128 @@
+
         return boardContainer;
     }
 
