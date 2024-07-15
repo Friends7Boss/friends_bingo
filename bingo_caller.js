@@ -1,109 +1,3 @@
-function playRecordedAudio(letter, number) {
-    // Base URL for the audio files on your GitHub repository
-    const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/main/audio-clips';
-
-    // Construct the URL for the letter audio file
-    const audioLetterURL = `${baseURL}/${letter}.mp3`;
-    console.log(`Playing letter audio from URL: ${audioLetterURL}`);
-
-    // Construct the URL for the number audio file
-    const audioNumberURL = `${baseURL}/${letter}${number}.mp3`;
-    console.log(`Playing number audio from URL: ${audioNumberURL}`);
-
-    // Create audio objects
-    const audioLetter = new Audio(audioLetterURL);
-    const audioNumber = new Audio(audioNumberURL);
-
-    // Play the letter audio first
-    audioLetter.play();
-
-    // Once the letter audio finishes, play the number audio
-    audioLetter.addEventListener('ended', () => {
-        console.log(`Finished playing letter audio. Now playing number audio from URL: ${audioNumberURL}`);
-        audioNumber.play();
-    });
-
-    // Error handling for audio playback
-    audioLetter.addEventListener('error', (e) => {
-        console.error(`Error playing letter audio: ${e}`);
-    });
-
-    audioNumber.addEventListener('error', (e) => {
-        console.error(`Error playing number audio: ${e}`);
-    });
-}
-
-// Example usage
-playRecordedAudio('B', '3');
-playRecordedAudio('B', '6');
-playRecordedAudio('B', '8');
-playRecordedAudio('B', '9');
-playRecordedAudio('B', '10');
-playRecordedAudio('B', '11');
-playRecordedAudio('B', '12');
-playRecordedAudio('B', '13');
-playRecordedAudio('B', '14');
-playRecordedAudio('B', '15');
-playRecordedAudio('I', '16');
-playRecordedAudio('I', '17');
-playRecordedAudio('I', '18');
-playRecordedAudio('I', '19');
-playRecordedAudio('I', '20');
-playRecordedAudio('I', '21');
-playRecordedAudio('I', '22');
-playRecordedAudio('I', '23');
-playRecordedAudio('I', '24');
-playRecordedAudio('I', '25');
-playRecordedAudio('I', '26');
-playRecordedAudio('I', '27');
-playRecordedAudio('I', '28');
-playRecordedAudio('I', '29');
-playRecordedAudio('I', '30');
-playRecordedAudio('N', '31');
-playRecordedAudio('N', '32');
-playRecordedAudio('N', '33');
-playRecordedAudio('N', '34');
-playRecordedAudio('N', '35');
-playRecordedAudio('N', '36');
-playRecordedAudio('N', '37');
-playRecordedAudio('N', '38');
-playRecordedAudio('N', '39');
-playRecordedAudio('N', '40');
-playRecordedAudio('N', '41');
-playRecordedAudio('N', '42');
-playRecordedAudio('N', '43');
-playRecordedAudio('N', '44');
-playRecordedAudio('N', '45');
-playRecordedAudio('G', '46');
-playRecordedAudio('G', '47');
-playRecordedAudio('G', '48');
-playRecordedAudio('G', '49');
-playRecordedAudio('G', '50');
-playRecordedAudio('G', '51');
-playRecordedAudio('G', '52');
-playRecordedAudio('G', '53');
-playRecordedAudio('G', '54');
-playRecordedAudio('G', '55');
-playRecordedAudio('G', '56');
-playRecordedAudio('G', '57');
-playRecordedAudio('G', '58');
-playRecordedAudio('G', '59');
-playRecordedAudio('G', '60');
-playRecordedAudio('O', '61');
-playRecordedAudio('O', '62');
-playRecordedAudio('O', '63');
-playRecordedAudio('O', '64');
-playRecordedAudio('O', '65');
-playRecordedAudio('O', '66');
-playRecordedAudio('O', '67');
-playRecordedAudio('O', '68');
-playRecordedAudio('O', '69');
-playRecordedAudio('O', '70');
-playRecordedAudio('O', '71');
-playRecordedAudio('O', '72');
-playRecordedAudio('O', '73');
-playRecordedAudio('O', '74');
-playRecordedAudio('O', '75');
 document.addEventListener('DOMContentLoaded', () => {
     const intervalSelect = document.getElementById('interval-select');
     const callNumberButton = document.getElementById('call-number-button');
@@ -113,9 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const calledNumberElement = document.getElementById('called-number');
     const calledNumbersContainer = document.getElementById('called-numbers-container');
     const totalBetAmountElement = document.getElementById('total-bet-amount');
-    const countdownElement = document.getElementById('countdown');
     const totalCallsElement = document.getElementById('total-calls');
+    const countdownElement = document.getElementById('countdown');
     const winnerModalBody = document.getElementById('winner-modal-body');
+    const reportButton = document.getElementById('report-button');
     const rows = {
         B: document.getElementById('row-B'),
         I: document.getElementById('row-I'),
@@ -366,8 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return boardContainer;
     }
 
-    document.getElementById('history-button').addEventListener('click', function() {
-        window.location.href = 'history.html';
+    reportButton.addEventListener('click', function() {
+        window.location.href = 'report.html';
     });
 
     function recordBetAmount() {
