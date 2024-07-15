@@ -2,93 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Report</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        .date-section {
-            margin-top: 40px;
-        }
-    </style>
+    <title>Bingo Report</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="my-4">Transaction Report</h1>
-        <div id="report-content">
-            <!-- Data will be inserted here -->
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const reportContent = document.getElementById('report-content');
-            
-            try {
-                const response = await fetch('https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/main/report_data.json');
-                const data = await response.json();
-                
-                for (const [date, entries] of Object.entries(data)) {
-                    const section = document.createElement('div');
-                    section.classList.add('date-section');
-                    
-                    const header = document.createElement('h2');
-                    header.textContent = `Date: ${date}`;
-                    section.appendChild(header);
-                    
-                    const table = document.createElement('table');
-                    table.innerHTML = `
-                        <thead>
-                            <tr>
-                                <th>Date & Time</th>
-                                <th>Total Players</th>
-                                <th>Total Games</th>
-                                <th>Bet Amount</th>
-                                <th>Total Bet Amount</th>
-                                <th>Profit (20% Deducted)</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    `;
-                    const tbody = table.querySelector('tbody');
-                    
-                    entries.forEach(entry => {
-                        const row = tbody.insertRow();
-                        row.insertCell(0).textContent = entry.date;
-                        row.insertCell(1).textContent = entry.totalPlayers;
-                        row.insertCell(2).textContent = entry.totalGames;
-                        row.insertCell(3).textContent = entry.betAmount;
-                        row.insertCell(4).textContent = entry.totalBetAmount;
-                        row.insertCell(5).textContent = entry.profit;
-                    });
-                    
-                    section.appendChild(table);
-                    reportContent.appendChild(section);
-                }
-            } catch (error) {
-                console.error('Error fetching report data:', error);
-            }
-        });
-    </script>
+    <h1>Bingo Game Report</h1>
+    <form id="reportForm">
+        <label for="betAmount">Bet Amount:</label>
+        <input type="number" id="betAmount" name="betAmount" required><br><br>
+        
+        <label for="totalBetAmount">Total Bet Amount:</label>
+        <input type="number" id="totalBetAmount" name="totalBetAmount" required><br><br>
+        
+        <label for="totalPlayers">Total Players:</label>
+        <input type="number" id="totalPlayers" name="totalPlayers" required><br><br>
+        
+        <label for="totalCalls">Total Calls:</label>
+        <input type="number" id="totalCalls" name="totalCalls" required><br><br>
+        
+        <button type="button" onclick="saveReport()">Save Report</button>
+    </form>
+
+    <h2>Daily Records</h2>
+    <table id="recordsTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Bet Amount</th>
+                <th>Total Bet Amount</th>
+                <th>Total Players</th>
+                <th>Total Calls</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Records will be inserted here -->
+        </tbody>
+    </table>
+    <script src="js/report.js"></script>
 </body>
 </html>
