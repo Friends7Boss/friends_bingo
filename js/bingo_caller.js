@@ -409,29 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function highlightNumbersRandomly() {
-        const numberElements = document.querySelectorAll('.number');
-        const highlightedIndices = new Set();
-
-        function highlightNextNumber() {
-            if (highlightedIndices.size < numberElements.length) {
-                let randomIndex;
-                do {
-                    randomIndex = Math.floor(Math.random() * numberElements.length);
-                } while (highlightedIndices.has(randomIndex));
-
-                highlightedIndices.add(randomIndex);
-                numberElements[randomIndex].classList.add('blink'); // Apply blink class
-                setTimeout(() => {
-                    numberElements[randomIndex].classList.remove('blink'); // Remove blink class after blinking
-                    highlightNextNumber();
-                }, 200); // Blink duration
-            }
-        }
-
-        highlightNextNumber();
-    }
-
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
         paused = !paused;
