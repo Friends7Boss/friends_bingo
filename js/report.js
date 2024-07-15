@@ -1,50 +1,68 @@
-document.addEventListener("DOMContentLoaded", function() {
-    loadRecords();
+import React, { useEffect, useState } from 'react';
+import 'css/report.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ReportPage from './ReportPage';
 
-    // Populate the form with data from localStorage
-    document.getElementById('betAmount').value = localStorage.getItem('betAmount') || '';
-    document.getElementById('totalBetAmount').value = localStorage.getItem('totalBetAmount') || '';
-    document.getElementById('totalPlayers').value = localStorage.getItem('totalPlayersCaller') || localStorage.getItem('totalPlayers') || '';
-    document.getElementById('totalCalls').value = localStorage.getItem('totalCalls') || '';
+ReactDOM.render(<ReportPage />, document.getElementById('root'));
 
-    document.getElementById("reportForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        saveReport();
-    });
-});
+const fetchData = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Network response was not ok');
+  const data = await response.json();
+  return data;
+};
 
-function saveReport() {
-    const betAmount = document.getElementById("betAmount").value;
-    const totalBetAmount = document.getElementById("totalBetAmount").value;
-    const totalPlayers = document.getElementById("totalPlayers").value;
-    const totalCalls = document.getElementById("totalCalls").value;
+const ReportPage = () => {
+  const [records, setRecords] = useState([]);
+  const [error, setError] = useState(null);
 
-    const record = {
-        date: new Date().toLocaleDateString(),
-        betAmount,
-        totalBetAmount,
-        totalPlayers,
-        totalCalls
+  useEffect(() => {
+    const loadRecords = async () => {
+      try {
+        const callerData = await fetchData('/api/caller');
+        const indexData = await fetchData('/api/index');
+        const combinedData = [...callerData, ...indexData];
+        const processedData = combinedData.map((item, index) => ({
+          id: index + 1,
+          name: item.name,
+          score: item.score,
+          date: item.date,
+        }));
+        setRecords(processedData);
+      } catch (error) {
+        setError(error.message);
+      }
     };
-
-    let records = JSON.parse(localStorage.getItem("bingoRecords")) || [];
-    records.push(record);
-    localStorage.setItem("bingoRecords", JSON.stringify(records));
-
     loadRecords();
-}
+  }, []);
 
-function loadRecords() {
-    const records = JSON.parse(localStorage.getItem("bingoRecords")) || [];
-    const recordsTable = document.getElementById("recordsTable").getElementsByTagName("tbody")[0];
-    recordsTable.innerHTML = "";
+  return (
+    <div className="report-container">
+      <h1>Report Page</h1>
+      {error && <div className="error">{error}</div>}
+      <table className="report-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Score</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {records.map(record => (
+            <tr key={record.id}>
+              <td>{record.id}</td>
+              <td>{record.name}</td>
+              <td>{record.score}</td>
+              <td>{record.date}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-    records.forEach(record => {
-        const row = recordsTable.insertRow();
-        row.insertCell(0).textContent = record.date;
-        row.insertCell(1).textContent = record.betAmount;
-        row.insertCell(2).textContent = record.totalBetAmount;
-        row.insertCell(3).textContent = record.totalPlayers;
-        row.insertCell(4).textContent = record.totalCalls;
-    });
-}
+export default ReportPage;
