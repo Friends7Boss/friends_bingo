@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const board = [];
             const boardRanges = ranges.map(range => [...range]);
             boardRanges.forEach(range => shuffle(range, randomFunc));
-
+ 
             for (let row = 0; row < 5; row++) {
                 const currentRow = [];
                 for (let col = 0; col < 5; col++) {
