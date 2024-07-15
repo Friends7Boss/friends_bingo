@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import './styles.css';
+import 'css/report.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ReportPage from './ReportPage';
+
+ReactDOM.render(<ReportPage />, document.getElementById('root'));
 
 const fetchData = async (url) => {
   const response = await fetch(url);
