@@ -1,5 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {
     loadRecords();
+
+    // Populate the form with data from localStorage
+    document.getElementById('betAmount').value = localStorage.getItem('betAmount') || '';
+    document.getElementById('totalBetAmount').value = localStorage.getItem('totalBetAmount') || '';
+    document.getElementById('totalPlayers').value = localStorage.getItem('totalPlayersCaller') || localStorage.getItem('totalPlayers') || '';
+    document.getElementById('totalCalls').value = localStorage.getItem('totalCalls') || '';
+
     document.getElementById("reportForm").addEventListener("submit", function(event) {
         event.preventDefault();
         saveReport();
