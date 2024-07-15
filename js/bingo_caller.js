@@ -3,12 +3,12 @@ function playRecordedAudio(letter, number) {
     const baseURL = 'https://raw.githubusercontent.com/Friendstech7/friends_bingo/main/audio-clips';
 
     // Construct the URL for the letter audio file
-    const audioLetterURL = ${baseURL}/${letter}.mp3;
-    console.log(Playing letter audio from URL: ${audioLetterURL});
+    const audioLetterURL = `${baseURL}/${letter}.mp3`;
+    console.log(`Playing letter audio from URL: ${audioLetterURL}`);
 
     // Construct the URL for the number audio file
-    const audioNumberURL = ${baseURL}/${letter}${number}.mp3;
-    console.log(Playing number audio from URL: ${audioNumberURL});
+    const audioNumberURL = `${baseURL}/${letter}${number}.mp3`;
+    console.log(`Playing number audio from URL: ${audioNumberURL}`);
 
     // Create audio objects
     const audioLetter = new Audio(audioLetterURL);
@@ -19,17 +19,17 @@ function playRecordedAudio(letter, number) {
 
     // Once the letter audio finishes, play the number audio
     audioLetter.addEventListener('ended', () => {
-        console.log(Finished playing letter audio. Now playing number audio from URL: ${audioNumberURL});
+        console.log(`Finished playing letter audio. Now playing number audio from URL: ${audioNumberURL}`);
         audioNumber.play();
     });
 
     // Error handling for audio playback
     audioLetter.addEventListener('error', (e) => {
-        console.error(Error playing letter audio: ${e});
+        console.error(`Error playing letter audio: ${e}`);
     });
 
     audioNumber.addEventListener('error', (e) => {
-        console.error(Error playing number audio: ${e});
+        console.error(`Error playing number audio: ${e}`);
     });
 }
 
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const div = document.createElement('div');
                 div.classList.add('number');
                 div.textContent = num;
-                div.dataset.number = ${letter}${num};
+                div.dataset.number = `${letter}${num}`;
                 rows[letter].appendChild(div);
             }
         }
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const availableNumbers = [];
         for (const [letter, nums] of Object.entries(numbers)) {
             for (const num of nums) {
-                const number = ${letter}${num};
+                const number = `${letter}${num}`;
                 if (!calledNumbers.has(number)) {
                     availableNumbers.push(number);
                 }
@@ -189,10 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         numberElement.classList.add('called');
 
-        calledNumberElement.innerHTML = <div class="ball ${letter.toLowerCase()}" style="background-color: ${ballColors[letter]}"><span>${letter}</span><span>${num}</span></div>;
+        calledNumberElement.innerHTML = `<div class="ball ${letter.toLowerCase()}" style="background-color: ${ballColors[letter]}"><span>${letter}</span><span>${num}</span></div>`;
         const calledNumberItem = document.createElement('div');
         calledNumberItem.classList.add('called-number-item', letter.toLowerCase());
-        calledNumberItem.innerHTML = <span>${letter}</span><span>${num}</span>;
+        calledNumberItem.innerHTML = `<span>${letter}</span><span>${num}</span>`;
 
         // Show only the 4 most recently called numbers
         if (calledNumbersContainer.children.length >= 4) {
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         calledNumbersContainer.appendChild(calledNumberItem);
 
-        totalCallsElement.textContent = Total Calls: ${totalCalls};
+        totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
         startCountdown();
         playRecordedAudio(letter, num);  // Play the recorded audio for the called letter and number
     }
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calledNumberElement.textContent = '';
         calledNumbersContainer.innerHTML = '';
         totalCalls = 0;
-        totalCallsElement.textContent = Total Calls: ${totalCalls};
+        totalCallsElement.textContent = `Total Calls: ${totalCalls}`;
         countdownElement.textContent = '';
 
         // Reset board UI
@@ -280,13 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!selectedIndices.includes(boardNumber - 1)) {
-            showModal(Board number ${boardNumber} is not registered.);
+            showModal(`Board number ${boardNumber} is not registered.`);
             return;
         }
 
         const board = boards[boardNumber - 1];
         const hasWon = checkBoard(board);
-        showModal(Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}, board, calledNumbersSet);
+        showModal(`Board number ${boardNumber} ${hasWon ? 'has won!' : 'has not won yet.'}`, board, calledNumbersSet);
         playPopupSound(hasWon);
     }
 
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         for (const pattern of winningPatterns) {
-            if (pattern.every(([r, c]) => calledNumbers.has(${'BINGO'[c]}${board[r][c]}) || board[r][c] === 'FREE')) {
+            if (pattern.every(([r, c]) => calledNumbers.has(`${'BINGO'[c]}${board[r][c]}`) || board[r][c] === 'FREE')) {
                 return true;
             }
         }
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showModal(message, board = null, calledNumbersSet = null) {
-        winnerModalBody.innerHTML = <p>${message}</p>;
+        winnerModalBody.innerHTML = `<p>${message}</p>`;
         if (board) {
             const boardElement = renderBingoBoard(board, calledNumbersSet);
             winnerModalBody.appendChild(boardElement);
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cellValue === 'FREE') {
                     cellElement.classList.add('free');
                 } else {
-                    const cellId = ${headers[j]}${cellValue};
+                    const cellId = `${headers[j]}${cellValue}`;
                     if (calledNumbersSet.has(cellId)) {
                         cellElement.classList.add('called-cell'); // Use the appropriate class to mark called numbers
                     }
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedIndices && selectedIndices.length > 0 && betAmount) {
             const totalBetAmount = selectedIndices.length * parseFloat(betAmount);
             const reducedBetAmount = totalBetAmount * 0.8; // Calculate 20% less
-            totalBetAmountElement.textContent = ደራሽ: ${reducedBetAmount.toFixed(2)};
+            totalBetAmountElement.textContent = `ደራሽ: ${reducedBetAmount.toFixed(2)}`;
         } else {
             totalBetAmountElement.textContent = 'ደራሽ: 0';
         }
@@ -408,6 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
             unclearSound.play().catch(e => console.log('Failed to play unclear sound:', e));
         }
     }
+
+    
 
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
@@ -437,13 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const triggerGithubAction = async (data) => {
-        const url = https://api.github.com/repos/Friendstech7/friends_bingo/actions/workflows/save_report_data.yml/dispatches;
+        const url = `https://api.github.com/repos/Friendstech7/friends_bingo/actions/workflows/save_report_data.yml/dispatches`;
         const token = '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';
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': token ${token},
+                'Authorization': `token ${token}`,
                 'Accept': 'application/vnd.github.v3+json'
             },
             body: JSON.stringify({
