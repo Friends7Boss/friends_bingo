@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bingo_caller.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container text-center">
+        <h1>Game Report</h1>
+        <div class="report-section">
+            <div id="report-content" class="report-content">
+                <!-- Report details will be injected here by JavaScript -->
+            </div>
+            <button id="back-button" class="btn btn-primary mt-3">Back to Game</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reportContent = document.getElementById('report-content');
+            const totalBetAmount = localStorage.getItem('totalBetAmount') || 0;
+            const totalCalls = localStorage.getItem('totalCalls') || 0;
+            const totalPlayers = localStorage.getItem('totalPlayersCaller') || 0;
+            const profit = totalBetAmount * 0.2;
+
+            reportContent.innerHTML = `
+                <p>Total Bet Amount: ${totalBetAmount}</p>
+                <p>Total Calls: ${totalCalls}</p>
+                <p>Total Players: ${totalPlayers}</p>
+                <p>Profit (20% deduction): ${profit}</p>
+            `;
+
+            document.getElementById('back-button').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>
