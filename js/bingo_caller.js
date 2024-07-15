@@ -780,7 +780,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         highlightNextNumber();
     }
-
     callNumberButton.addEventListener('click', startCallingNumbers);
     playPauseButton.addEventListener('click', () => {
         paused = !paused;
