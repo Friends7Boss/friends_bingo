@@ -96,3 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+document.getElementById('indexForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const betAmount = document.getElementById('betAmount').value;
+            const totalPlayers = document.getElementById('totalPlayers').value;
+            localStorage.setItem('betAmount', betAmount);
+            localStorage.setItem('totalPlayers', totalPlayers);
+            window.location.href = 'bingo_caller.html';
+        });
